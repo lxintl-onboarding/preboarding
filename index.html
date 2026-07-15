@@ -1318,7 +1318,7 @@ tabs.forEach(function (tab) {
 });
 
 /* ================= Checklist + progress ================= */
-var STORAGE_KEY = 'lx-onboarding-todo';
+var STORAGE_KEY = 'lx-onboarding-todo' + (LX_TOKEN ? '-' + LX_TOKEN : '');
 var checkboxes = document.querySelectorAll('.todo > input[type="checkbox"][data-key]');
 var todoList  = document.getElementById('todoList');
 var pct   = document.getElementById('progressPct');
@@ -1628,7 +1628,7 @@ if (!DDAY_FROM_URL) renderDday(FIRST_DAY);
   var counter = document.getElementById('docsCount');
   var parentCb = todo.querySelector('input[data-key="docs-submit"]');
   var subCbs   = list.querySelectorAll('input[data-doc]');
-  var DOC_KEY  = 'lx-onboarding-docs';
+  var DOC_KEY  = 'lx-onboarding-docs' + (LX_TOKEN ? '-' + LX_TOKEN : '');
   var TOTAL_DOC = subCbs.length;
 
   /* label 중첩 → 클릭이 상위 체크박스로 새는 것 방지 */
