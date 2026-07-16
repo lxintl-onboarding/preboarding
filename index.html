@@ -308,7 +308,7 @@
   }
 
   /* ===== 출근 후 일정 타임라인 (시간 흐름 · 원형 마커) ===== */
-  .after-day1 { margin-top: 40px; }
+  .after-day1 { margin-top: 56px; }
   .timeline-box { padding: 20px 20px 18px; }
   .timeline { list-style:none; margin:0; padding:0; }
   .timeline li { position:relative; padding:0 0 18px 28px; }
@@ -488,6 +488,7 @@
   .todo .chk svg { width: 13px; height: 13px; stroke: #fff; stroke-width: 3.2; fill: none; opacity: 0; transition: opacity .15s; }
   .todo.done .chk { background: var(--brand); border-color: var(--brand); }
   .todo.done .chk svg { opacity: 1; }
+  .todo .txt { flex: 1 1 0; min-width: 0; }
   .todo .txt h4 { font-size: 15.5px; font-weight: 700; transition: color .2s; }
   .todo .txt p { font-size: 14px; color: var(--ink-sub); margin-top: 3px; line-height: 1.6; }
   .todo.done .txt h4 { color: var(--ink-faint); text-decoration: line-through; text-decoration-thickness: 1.5px; }
@@ -889,21 +890,21 @@
           <span class="badge-next">NEXT</span>
           <input type="checkbox" data-key="gift">
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="1.5"></rect><path d="M3 8h18M12 8v13M7.5 8a2.5 2.5 0 010-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 010 5"></path></svg></span>
-          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
           <span class="txt">
             <h4>웰컴 키트·배송지 입력</h4>
             <p>아래 폼에서 받으실 주소를 등록해 주세요. 첫 출근 전 도착하도록 발송합니다.</p>
           </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
         </label>
         <div class="card todo has-sub" id="docsTodo">
           <span class="badge-next">NEXT</span>
           <input type="checkbox" data-key="docs-submit">
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a1 1 0 011-1h5l2 2h9a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V7z"></path></svg></span>
-          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
           <span class="txt">
             <h4>구비서류 준비</h4>
             <p>총 9종의 서류가 필요합니다. 아래에서 하나씩 확인해 주세요.</p>
           </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
           <button type="button" class="sub-toggle" id="docsToggle" aria-expanded="false" aria-controls="docsList">
             <span class="sub-toggle-label"><span class="arr-badge" aria-hidden="true"><span class="arr"></span></span> 서류 목록 보기</span>
             <span class="sub-count" id="docsCount">0/9</span>
@@ -963,31 +964,31 @@
           <span class="badge-next">NEXT</span>
           <input type="checkbox" data-key="docs-id">
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><circle cx="8.5" cy="11" r="2"></circle><path d="M5.5 16c.5-1.8 1.8-3 3-3s2.5 1.2 3 3"></path><path d="M14 10h5M14 13h5"></path></svg></span>
-          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
           <span class="txt">
             <h4>신분증 사본 준비</h4>
             <p>4대 보험 가입과 사원 등록을 위해 신분증 사본이 필요해요.</p>
           </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
         </label>
         <label class="card todo">
           <span class="badge-next">NEXT</span>
           <input type="checkbox" data-key="firstday">
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg></span>
-          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
           <span class="txt">
             <h4>첫 출근 일정 등록</h4>
             <p>위 안내의 출근일시·장소를 캘린더에 등록하고, 이동 경로를 미리 확인해 두세요.</p>
           </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
         </label>
         <label class="card todo">
           <span class="badge-next">NEXT</span>
           <input type="checkbox" data-key="dresscode">
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a2 2 0 012 2c0 .9-.6 1.6-1.4 1.9L12 7l-.6-.1A2 2 0 0110 5a2 2 0 012-2z"></path><path d="M12 7l8.5 5.2c.9.5.6 1.8-.4 1.8H17v6H7v-6H3.9c-1 0-1.3-1.3-.4-1.8L12 7z"></path></svg></span>
-          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
           <span class="txt">
             <h4>복장·준비물 체크</h4>
             <p>출근 복장은 <b>자율 복장</b>입니다. 첫날 필요한 소지품을 미리 챙겨두세요.</p>
           </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
         </label>
         <button type="button" class="done-toggle" id="doneToggle" aria-expanded="true"></button>
       </div>
@@ -1243,7 +1244,7 @@
     <img class="mascot" src="assets/하이렉스.gif" alt="" aria-hidden="true">
     <h3 id="celebrateTitle">모든 준비를 마쳤어요!</h3>
     <p>입사 전 체크리스트를 100% 완료하셨습니다.<br>이제 첫 출근일에 만나요. 진심으로 환영합니다!</p>
-    <button type="button" id="celebrateClose">고맙습니다</button>
+    <button type="button" id="celebrateClose">확인했습니다</button>
   </div>
 </div>
 
