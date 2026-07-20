@@ -840,7 +840,7 @@
           <div>
             <div class="day1-label">YOUR FIRST DAY</div>
             <div class="day1-date" id="d1Date">20OO년 OO월 OO일 (O)</div>
-            <div class="day1-time" id="d1Time">오전 9:00 까지</div>
+            <div class="day1-time" id="d1Time">오전 9:00까지</div>
           </div>
           <div class="dday" aria-live="polite">
             <span class="num" id="ddayNum">D-0</span>
@@ -900,7 +900,7 @@
     <section class="panel" id="panel-todo" role="tabpanel" aria-labelledby="tab-todo">
       <div class="eyebrow">Before Day 1</div>
       <h2 class="panel-title">입사 전 To-Do</h2>
-      <p class="panel-desc">체크리스트를 활용해 보세요. 하나씩 차근차근 완료해 가면서 막막함을 줄여보세요. </p>
+      <p class="panel-desc">체크리스트를 활용해 보세요. 하나씩 차근차근 완료해 가면서 막막함을 줄여보세요.</p>
 
       <div class="dday-mini" id="ddayMini" aria-live="polite">
         <span class="num" id="ddayNumMini">D-0</span>
@@ -1086,7 +1086,6 @@
             <textarea id="f-memo" name="memo" placeholder="알레르기, 수령 가능 시간 등 참고사항을 적어주세요."></textarea>
           </div>
           <button type="submit" class="save-btn" id="saveBtn">배송지 저장하기</button>
-          <p class="form-note">※ 본 앱은 미리보기용으로, 입력값은 서버로 전송되지 않습니다.<br>실제 운영 시 인사팀 시스템과 연동될 예정입니다.</p>
         </form>
       </div>
     </section>
@@ -1095,7 +1094,7 @@
     <section class="panel" id="panel-info" role="tabpanel" aria-labelledby="tab-info">
       <div class="eyebrow">Good to Know</div>
       <h2 class="panel-title">입사 전 참고 정보</h2>
-      <p class="panel-desc">알고 시작하면 첫날이 한결 가벼워집니다. 미리 한 번 살펴보세요.</p>
+      <p class="panel-desc">알고 시작하면 첫날이 한결 가벼워집니다. 미리 한번 살펴보세요.</p>
 
       <div class="info-filter" role="tablist" aria-label="참고 정보 카테고리">
         <button type="button" class="info-filter-btn active" role="tab" aria-selected="true" data-group="culture">LX인터내셔널 문화</button>
@@ -1288,8 +1287,8 @@
               <p class="acc-intro">회사의 정보는 곧 신뢰 자산입니다. 처음부터 좋은 습관을 들여주세요.</p>
               <ul>
                 <li>업무 자료와 개인 자료는 명확히 분리하고, 사내 정보는 외부로 반출하지 마세요.</li>
-                <li>비밀번호·계정 정보는 절대 공유하지 않고, 자리를 비울 땐 화면을 잠궈 주세요.</li>
-                <li>출처가 불분명한 메일·링크는 클릭 전 한 번 더 확인해 주세요.</li>
+                <li>비밀번호·계정 정보는 절대 공유하지 않고, 자리를 비울 땐 화면을 잠가 주세요.</li>
+                <li>출처가 불분명한 메일·링크는 클릭 전 한번 더 확인해 주세요.</li>
                 <li>SNS에 회사·업무 관련 내용을 올릴 땐 항상 신중하게 확인해 주세요.</li>
               </ul>
             </div>
@@ -1764,7 +1763,7 @@ function markGiftAlreadySubmitted() {
 /* 기본값(토큰 조회 실패·미리보기 모드용). 개인화 조회(GAS)에서 실제 출근일을 받으면
    renderDday()가 다시 호출되어 이 값을 덮어씁니다. */
 var FIRST_DAY = '2026-06-22';   // YYYY-MM-DD
-var FIRST_TIME = '오전 9:00 까지';
+var FIRST_TIME = '오전 9:00까지';
 
 function renderDday(dateStr) {
   var WD = ['일','월','화','수','목','금','토'];
