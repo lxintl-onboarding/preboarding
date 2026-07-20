@@ -57,7 +57,6 @@
        기존처럼 동작하므로 안전한 점진적 개선(progressive enhancement)임 */
     word-break: keep-all;
     overflow-wrap: break-word;
-    text-wrap: pretty;
   }
   .app {
     max-width: 480px;
@@ -76,7 +75,7 @@
   .hero {
     background: linear-gradient(160deg, var(--brand) 0%, var(--brand-dark) 70%, var(--brand-deep) 100%);
     color: #fff;
-    padding: 20px 22px 30px;
+    padding: 20px 22px 36px;
     position: relative;
     overflow: hidden;
   }
@@ -228,11 +227,7 @@
     padding: 22px 20px;
     margin-bottom: 18px;
   }
-  .welcome-note .label {
-    font-size: 12px; font-weight: 700; letter-spacing: .1em;
-    color: rgba(255,255,255,.78);
-    margin-bottom: 12px;
-  }
+  .welcome-section { margin-top: 32px; }
   .welcome-note blockquote {
     font-size: 15.5px; line-height: 1.8; font-weight: 500;
   }
@@ -241,8 +236,8 @@
     font-size: 14px; opacity: .85; font-weight: 600;
   }
 
+  .intro-section { margin-top: 32px; }
   .about { padding: 22px; margin-bottom: 20px; }
-  .about h3 { font-size: 16.5px; font-weight: 700; margin-bottom: 10px; }
   .about p { font-size: 15px; color: var(--ink-sub); line-height: 1.75; }
   .hashtags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
   .hashtag {
@@ -754,7 +749,7 @@
     </div>
     <h1><span id="heroName">OOO</span>님,<br>입사를 진심으로 환영합니다</h1>
     <p>새로운 여정의 첫 페이지, 당신을 위해 준비했습니다.<br>입사 전 알아두면 좋을 모든 것을 한곳에 담았어요.</p>
-    <div class="hero-badge">입사를 위한 첫 걸음</div>
+    <div class="hero-badge">입사 전 온보딩 가이드</div>
   </header>
 
   <div class="sheet">
@@ -772,24 +767,32 @@
         <p>영상 링크가 등록되면 이곳에서 바로 재생됩니다.<br>(현재는 준비 중)</p>
       </div>
 
-      <div class="welcome-note">
-        <div class="label">WELCOME NOTE</div>
-        <blockquote>
-          "LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
-          여러분의 도전과 열정이 우리의 내일을 더 단단하게 만들 것이라 믿습니다.
-          첫걸음을 응원하며, 우리 함께 성장해 나갑시다."
-          <span class="sign">— LX인터내셔널 임직원 일동</span>
-        </blockquote>
+      <div class="welcome-section">
+        <div class="eyebrow">Welcome Note</div>
+        <h2 class="panel-title">동료들의 환영 인사</h2>
+        <p class="panel-desc">새로운 동료를 향한 임직원들의 마음을 먼저 전해드려요.</p>
+        <div class="welcome-note">
+          <blockquote>
+            "LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
+            여러분의 도전과 열정이 우리의 내일을 더 단단하게 만들 것이라 믿습니다.
+            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."
+            <span class="sign">— LX인터내셔널 임직원 일동</span>
+          </blockquote>
+        </div>
       </div>
 
-      <div class="card-info about">
-        <h3>우리는 이런 회사예요</h3>
-        <p>LX인터내셔널은 글로벌 무역·자원·물류 사업을 기반으로 미래 성장 동력을 만들어가는 종합상사입니다. 전 세계를 무대로 한 비즈니스의 한 축을, 이제 여러분과 함께 그려갑니다.</p>
-        <div class="hashtags">
-          <span class="hashtag">#글로벌</span>
-          <span class="hashtag">#무역자원</span>
-          <span class="hashtag">#물류</span>
-          <span class="hashtag">#친환경산업</span>
+      <div class="intro-section">
+        <div class="eyebrow">Introduction</div>
+        <h2 class="panel-title">회사 소개</h2>
+        <p class="panel-desc">함께하게 될 회사가 어떤 곳인지 미리 살펴보세요.</p>
+        <div class="card-info about">
+          <p>LX인터내셔널은 글로벌 무역·자원·물류 사업을 기반으로 미래 성장 동력을 만들어가는 종합상사입니다. 전 세계를 무대로 한 비즈니스의 한 축을, 이제 여러분과 함께 그려갑니다.</p>
+          <div class="hashtags">
+            <span class="hashtag">#글로벌</span>
+            <span class="hashtag">#무역자원</span>
+            <span class="hashtag">#물류</span>
+            <span class="hashtag">#친환경산업</span>
+          </div>
         </div>
       </div>
     </section>
@@ -1175,17 +1178,9 @@
 
       <div class="explore-section">
         <div class="eyebrow">Explore More</div>
-        <h2 class="panel-title">LX 더 알아보기</h2>
-        <p class="panel-desc">채용·복지·계열사 정보를 링크로 정리했어요. 눌러서 자세히 살펴보세요.</p>
+        <h2 class="panel-title">LX인터내셔널 더 알아보기</h2>
+        <p class="panel-desc">홈페이지·SNS 채널 정보를 링크로 정리했어요. 눌러서 자세히 살펴보세요.</p>
         <div class="link-list">
-          <a class="card link-row" href="https://lx.recruiter.co.kr/career/home-1" target="_blank" rel="noopener">
-            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4a1 1 0 001 1h2l10 5V4L6 9H4a1 1 0 00-1 1z"></path><path d="M17 9a4 4 0 010 6"></path></svg></span>
-            <span class="link-txt">
-              <h4>채용 소식·인재 이야기</h4>
-              <p>채용공고, LX 그룹 유튜브, LX人 이야기를 한 곳에서 만나보세요.</p>
-            </span>
-            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
-          </a>
           <a class="card link-row" href="https://lx.recruiter.co.kr/career/benefits" target="_blank" rel="noopener">
             <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.35-9.5-9A5.5 5.5 0 0112 5a5.5 5.5 0 019.5 6C19 15.65 12 20 12 20z"></path></svg></span>
             <span class="link-txt">
@@ -1194,19 +1189,43 @@
             </span>
             <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
           </a>
-          <a class="card link-row" href="https://lx.recruiter.co.kr/career/family" target="_blank" rel="noopener">
-            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
+          <a class="card link-row" href="https://www.lxinternational.com/" target="_blank" rel="noopener">
+            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"></path><path d="M5 10v9a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1v-9"></path></svg></span>
             <span class="link-txt">
-              <h4>LX 계열사</h4>
-              <p>LX 그룹 계열사 목록과 각 회사 홈페이지로 이동합니다.</p>
+              <h4>홈페이지</h4>
+              <p>LX인터내셔널 개요와 사업 소개를 한눈에 확인해 보세요.</p>
+            </span>
+            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
+          </a>
+          <a class="card link-row" href="https://www.youtube.com/channel/UCqQ2c9dZd087k1GTiSn8Sdg" target="_blank" rel="noopener">
+            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="4"></rect><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"></path></svg></span>
+            <span class="link-txt">
+              <h4>유튜브</h4>
+              <p>영상으로 만나는 LX인터내셔널 이야기를 구독해 보세요.</p>
+            </span>
+            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
+          </a>
+          <a class="card link-row" href="https://www.instagram.com/lxinternational_official/" target="_blank" rel="noopener">
+            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg></span>
+            <span class="link-txt">
+              <h4>인스타그램</h4>
+              <p>일상 속 LX인터내셔널 소식을 팔로우해 보세요.</p>
             </span>
             <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
           </a>
           <a class="card link-row" href="https://blog.naver.com/PostList.naver?blogId=lxinternational&amp;categoryNo=12&amp;skinType=&amp;skinId=&amp;from=menu&amp;userSelectMenu=true" target="_blank" rel="noopener">
             <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h6M7 12h10M7 16h10"></path></svg></span>
             <span class="link-txt">
-              <h4>LX인터내셔널 블로그</h4>
-              <p>회사 소식과 사업 이야기를 블로그에서 만나보세요.</p>
+              <h4>블로그</h4>
+              <p>LX인터내셔널 소식과 사업 이야기를 블로그에서 만나보세요.</p>
+            </span>
+            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
+          </a>
+          <a class="card link-row" href="https://lx.recruiter.co.kr/career/home-1" target="_blank" rel="noopener">
+            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4a1 1 0 001 1h2l10 5V4L6 9H4a1 1 0 00-1 1z"></path><path d="M17 9a4 4 0 010 6"></path></svg></span>
+            <span class="link-txt">
+              <h4>LX그룹 이야기</h4>
+              <p>추가적으로 LX그룹의 이야기를 만나보세요.</p>
             </span>
             <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
           </a>
