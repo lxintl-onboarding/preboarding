@@ -626,6 +626,23 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ===== Tab 3: Accordion ===== */
+  /* ===== 참고 정보 카테고리 필터 (LX인터내셔널 문화 / 기본 매너·에티켓) ===== */
+  .info-filter { display: flex; gap: 8px; margin-bottom: 16px; }
+  .info-filter-btn {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13.5px; font-weight: 700;
+    padding: 10px 12px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--ink-sub);
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .info-filter-btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .info-filter-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
   .acc-list { display: flex; flex-direction: column; gap: 10px; }
   .acc {
     overflow: hidden;
@@ -721,6 +738,20 @@
   .link-txt p { font-size: 13.5px; color: var(--ink-sub); margin-top: 3px; line-height: 1.5; }
   .link-arrow { flex: none; color: var(--ink-faint); }
   .link-arrow svg { width: 16px; height: 16px; }
+
+  /* 유튜브·인스타그램·블로그처럼 목적이 같은 SNS 채널은 카드 3장 대신 아이콘 한 줄로 압축 */
+  .sns-row:hover { border-color: var(--line); transform: none; }
+  .sns-icons { display: flex; gap: 8px; flex: none; }
+  .sns-icons a {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--brand-light); color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, color .2s;
+  }
+  .sns-icons a:hover { background: var(--brand); color: #fff; }
+  .sns-icons a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .sns-icons a svg { width: 18px; height: 18px; }
 
   /* ===== Footer ===== */
   .footer {
@@ -1066,9 +1097,14 @@
       <h2 class="panel-title">입사 전 참고 정보</h2>
       <p class="panel-desc">알고 시작하면 첫날이 한결 가벼워집니다. 미리 살펴보세요.</p>
 
-      <div class="acc-list">
+      <div class="info-filter" role="tablist" aria-label="참고 정보 카테고리">
+        <button type="button" class="info-filter-btn" role="tab" aria-selected="false" data-group="culture">LX인터내셔널 문화</button>
+        <button type="button" class="info-filter-btn active" role="tab" aria-selected="true" data-group="etiquette">기본 매너·에티켓</button>
+      </div>
 
-        <div class="card acc">
+      <div class="acc-list" id="accList">
+
+        <div class="card acc" data-group="etiquette">
           <button class="acc-head" aria-expanded="false">
             <span class="acc-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"></path><path d="M5 4h11l-2.5 4L16 12H5"></path></svg></span>
             <span class="acc-title">출근 첫날, 이렇게 보내면 완벽해요</span>
@@ -1087,7 +1123,7 @@
           </div>
         </div>
 
-        <div class="card acc">
+        <div class="card acc" data-group="etiquette">
           <button class="acc-head" aria-expanded="false">
             <span class="acc-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-4 4V5z"></path></svg></span>
             <span class="acc-title">비즈니스 커뮤니케이션 기본기</span>
@@ -1106,7 +1142,7 @@
           </div>
         </div>
 
-        <div class="card acc">
+        <div class="card acc" data-group="etiquette">
           <button class="acc-head" aria-expanded="false">
             <span class="acc-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"></rect><path d="M8 20h8M12 16v4"></path></svg></span>
             <span class="acc-title">회의·보고 매너</span>
@@ -1125,7 +1161,7 @@
           </div>
         </div>
 
-        <div class="card acc">
+        <div class="card acc" data-group="etiquette">
           <button class="acc-head" aria-expanded="false">
             <span class="acc-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.6"></circle><path d="M2.5 20c.6-3.6 3-5.5 5.5-5.5s4.6 1.6 5.3 4"></path><path d="M13.8 15c1.7-.3 3.6.6 4.2 3"></path></svg></span>
             <span class="acc-title">동료와 잘 지내는 법</span>
@@ -1144,7 +1180,7 @@
           </div>
         </div>
 
-        <div class="card acc">
+        <div class="card acc" data-group="etiquette">
           <button class="acc-head" aria-expanded="false">
             <span class="acc-num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg></span>
             <span class="acc-title">디지털·보안 에티켓</span>
@@ -1197,30 +1233,18 @@
             </span>
             <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
           </a>
-          <a class="card link-row" href="https://www.youtube.com/channel/UCqQ2c9dZd087k1GTiSn8Sdg" target="_blank" rel="noopener">
-            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="4"></rect><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"></path></svg></span>
+          <div class="card link-row sns-row">
+            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="6" r="2.5"></circle><circle cx="18" cy="18" r="2.5"></circle><path d="M8.2 10.8L15.8 7.2M8.2 13.2L15.8 16.8"></path></svg></span>
             <span class="link-txt">
-              <h4>유튜브</h4>
-              <p>영상으로 만나는 LX인터내셔널 이야기를 구독해 보세요.</p>
+              <h4>SNS 채널</h4>
+              <p>유튜브·인스타그램·블로그에서 소식을 만나보세요.</p>
             </span>
-            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
-          </a>
-          <a class="card link-row" href="https://www.instagram.com/lxinternational_official/" target="_blank" rel="noopener">
-            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg></span>
-            <span class="link-txt">
-              <h4>인스타그램</h4>
-              <p>일상 속 LX인터내셔널 소식을 팔로우해 보세요.</p>
+            <span class="sns-icons">
+              <a href="https://www.youtube.com/channel/UCqQ2c9dZd087k1GTiSn8Sdg" target="_blank" rel="noopener" aria-label="LX인터내셔널 유튜브"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="4"></rect><path d="M10 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"></path></svg></a>
+              <a href="https://www.instagram.com/lxinternational_official/" target="_blank" rel="noopener" aria-label="LX인터내셔널 인스타그램"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle></svg></a>
+              <a href="https://blog.naver.com/PostList.naver?blogId=lxinternational&amp;categoryNo=12&amp;skinType=&amp;skinId=&amp;from=menu&amp;userSelectMenu=true" target="_blank" rel="noopener" aria-label="LX인터내셔널 블로그"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h6M7 12h10M7 16h10"></path></svg></a>
             </span>
-            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
-          </a>
-          <a class="card link-row" href="https://blog.naver.com/PostList.naver?blogId=lxinternational&amp;categoryNo=12&amp;skinType=&amp;skinId=&amp;from=menu&amp;userSelectMenu=true" target="_blank" rel="noopener">
-            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h6M7 12h10M7 16h10"></path></svg></span>
-            <span class="link-txt">
-              <h4>블로그</h4>
-              <p>LX인터내셔널 소식과 사업 이야기를 블로그에서 만나보세요.</p>
-            </span>
-            <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
-          </a>
+          </div>
           <a class="card link-row" href="https://lx.recruiter.co.kr/career/home-1" target="_blank" rel="noopener">
             <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4a1 1 0 001 1h2l10 5V4L6 9H4a1 1 0 00-1 1z"></path><path d="M17 9a4 4 0 010 6"></path></svg></span>
             <span class="link-txt">
@@ -1473,6 +1497,27 @@ updateProgress(false);
   checkboxes.forEach(function (cb) { if (cb.checked) done++; });
   if (done === TOTAL) hasCelebrated = true;
 })();
+
+/* ================= 참고 정보 카테고리 필터 ================= */
+document.querySelectorAll('.info-filter-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var group = btn.getAttribute('data-group');
+    document.querySelectorAll('.info-filter-btn').forEach(function (b) {
+      var active = b === btn;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    document.querySelectorAll('#accList .acc').forEach(function (acc) {
+      var show = acc.getAttribute('data-group') === group;
+      acc.style.display = show ? '' : 'none';
+      if (!show && acc.classList.contains('open')) {
+        acc.classList.remove('open');
+        acc.querySelector('.acc-body').style.maxHeight = '0px';
+        acc.querySelector('.acc-head').setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+});
 
 /* ================= Accordion ================= */
 document.querySelectorAll('.acc-head').forEach(function (head) {
