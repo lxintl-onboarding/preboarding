@@ -1200,7 +1200,7 @@
         </div>
       </div>
 
-      <div class="card-info dodont">
+      <div class="card-info dodont" data-group="etiquette">
         <h3>한눈에 보는 Do &amp; Don't</h3>
         <div class="dd-box dd-do">
           <div class="dd-lbl">DO</div>
@@ -1507,7 +1507,7 @@ document.querySelectorAll('.info-filter-btn').forEach(function (btn) {
       b.classList.toggle('active', active);
       b.setAttribute('aria-selected', active ? 'true' : 'false');
     });
-    document.querySelectorAll('#accList .acc').forEach(function (acc) {
+    document.querySelectorAll('#accList .acc, .dodont').forEach(function (acc) {
       var show = acc.getAttribute('data-group') === group;
       acc.style.display = show ? '' : 'none';
       if (!show && acc.classList.contains('open')) {
