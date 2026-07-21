@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LX 온보딩 앱 — 배송지 자동 연동 아키텍처 결정</title>
+<style>
+  :root {
+    --bg: #FAF7F5;
+    --surface: #FFFFFF;
+    --surface-sunken: #F5F2F1;
+    --ink: #3A322F;
+    --ink-sub: #746661;
+    --ink-faint: #A6A49D;
+    --line: #E9E5E3;
+    --accent: #A72B2A;
+    --accent-dark: #822221;
+    --accent-tint: #FBF0F0;
+    --gold: #C6AB85;
+    --ok: #1D9E75;
+    --ok-tint: #E9F7F1;
+    --caution: #A0700A;
+    --caution-tint: #FBF2E1;
+    --shadow: 0 1px 3px rgba(58,50,47,.06), 0 8px 24px rgba(58,50,47,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1B1613;
+      --surface: #241E1A;
+      --surface-sunken: #201A17;
+      --ink: #F1E9E5;
+      --ink-sub: #C8BAB3;
+      --ink-faint: #8C7D77;
+      --line: #3B322D;
+      --accent: #E2685C;
+      --accent-dark: #F08A80;
+      --accent-tint: rgba(226,104,92,.14);
+      --gold: #D8BE94;
+      --ok: #4FDBA0;
+      --ok-tint: rgba(79,219,160,.12);
+      --caution: #E3AC4E;
+      --caution-tint: rgba(227,172,78,.13);
+      --shadow: 0 1px 3px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", -apple-system, sans-serif;
+    line-height: 1.62;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+  }
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 28px 96px;
+  }
+
+  /* ===== Header / ADR meta ===== */
+  .doc-kicker {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 700; letter-spacing: .14em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .doc-kicker::before {
+    content: ""; width: 20px; height: 2px; background: var(--gold);
+  }
+  h1.doc-title {
+    font-size: 32px; font-weight: 800; letter-spacing: -.02em;
+    line-height: 1.3; text-wrap: balance;
+    margin: 0 0 14px;
+  }
+  .doc-summary {
+    font-size: 16px; color: var(--ink-sub); max-width: 62ch;
+    margin: 0 0 28px;
+  }
+  .meta-strip {
+    display: flex; flex-wrap: wrap; gap: 0;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    margin-bottom: 48px;
+  }
+  .meta-item {
+    flex: 1 1 140px;
+    padding: 14px 20px 14px 0;
+    border-right: 1px solid var(--line);
+  }
+  .meta-item:last-child { border-right: none; }
+  .meta-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 5px;
+  }
+  .meta-value { font-size: 14px; font-weight: 700; }
+  .meta-value.pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ok);
+  }
+  .meta-value.pill::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok);
+  }
+
+  /* ===== Section rhythm ===== */
+  section { margin-bottom: 56px; }
+  .sec-eyebrow {
+    font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 8px;
+  }
+  h2.sec-title {
+    font-size: 21px; font-weight: 800; letter-spacing: -.01em;
+    margin: 0 0 16px; text-wrap: balance;
+  }
+  .sec-lede {
+    font-size: 15px; color: var(--ink-sub); max-width: 68ch;
+    margin: 0 0 20px;
+  }
+
+  /* ===== Architecture diagram ===== */
+  .arch-diagram {
+    display: flex; align-items: stretch; gap: 0;
+    background: var(--surface-sunken);
+    border-radius: 16px;
+    padding: 28px 20px;
+    margin-bottom: 14px;
+    overflow-x: auto;
+  }
+  .arch-row { display: flex; align-items: center; gap: 0; flex: none; margin: 0 auto; }
+  .arch-node {
+    flex: none; width: 168px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .arch-node.client { border-top: 3px solid var(--ink-faint); }
+  .arch-node.pages { border-top: 3px solid var(--gold); }
+  .arch-node.gas { border-top: 3px solid var(--accent); }
+  .arch-node.sheet { border-top: 3px solid var(--ok); }
+  .arch-node-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 6px;
+  }
+  .arch-node-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+  .arch-node-desc { font-size: 11.5px; color: var(--ink-sub); line-height: 1.5; }
+  .arch-arrow {
+    flex: none; width: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 0 4px;
+  }
+  .arch-arrow svg { width: 28px; height: 10px; color: var(--ink-faint); }
+  .arch-arrow .arch-arrow-label {
+    font-size: 9.5px; color: var(--ink-faint); white-space: nowrap;
+  }
+  .arch-stack { display: flex; flex-direction: column; gap: 10px; }
+  .arch-plus { font-size: 18px; color: var(--ink-faint); text-align: center; }
+  .arch-node.admin { border-top: 3px solid var(--gold); }
+  .person-stack { flex: none; display: flex; flex-direction: column; gap: 8px; }
+  .person-chip {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 8px 16px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .person-chip b { font-size: 13px; font-weight: 700; }
+  .person-chip span { font-size: 10.5px; color: var(--ink-faint); }
+
+  /* ===== Comparison tables ===== */
+  .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--line); }
+  table {
+    border-collapse: collapse; width: 100%; min-width: 520px;
+    font-size: 13.5px; background: var(--surface);
+  }
+  caption {
+    text-align: left; font-size: 12px; font-weight: 700; color: var(--ink-sub);
+    padding: 12px 16px 0; caption-side: top;
+  }
+  th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+  thead th {
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--ink-faint); background: var(--surface-sunken);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.num, th.num { font-variant-numeric: tabular-nums; }
+  .row-chosen { background: var(--accent-tint); }
+  .row-chosen td:first-child { position: relative; padding-left: 24px; font-weight: 800; color: var(--accent); }
+  .row-chosen td:first-child::before {
+    content: ""; position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  .verdict { font-size: 12.5px; }
+  .verdict.good { color: var(--ok); font-weight: 700; }
+  .verdict.bad { color: var(--caution); font-weight: 700; }
+
+  /* ===== Cost strip ===== */
+  .cost-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+  .cost-card {
+    flex: 1 1 190px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+  }
+  .cost-card.chosen { border-color: var(--accent); background: var(--accent-tint); }
+  .cost-figure {
+    font-size: 26px; font-weight: 800; letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .cost-figure .unit { font-size: 13px; font-weight: 700; color: var(--ink-sub); margin-left: 3px; }
+  .cost-label { font-size: 12.5px; color: var(--ink-sub); margin-top: 4px; }
+  .cost-card.chosen .cost-figure { color: var(--accent); }
+
+  /* ===== Flow timeline ===== */
+  .flow-list { list-style: none; margin: 0; padding: 0; }
+  .flow-item {
+    position: relative; display: flex; gap: 18px;
+    padding: 0 0 28px 0;
+  }
+  .flow-item:last-child { padding-bottom: 0; }
+  .flow-rail { flex: none; display: flex; flex-direction: column; align-items: center; width: 32px; }
+  .flow-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+  .flow-item.optional .flow-num { border-color: var(--ink-faint); color: var(--ink-faint); }
+  .flow-connector { width: 2px; flex: 1; background: var(--line); margin-top: 4px; }
+  .flow-body { padding-top: 3px; flex: 1; }
+  .flow-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .flow-tag {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+    padding: 2px 8px; border-radius: 999px;
+    background: var(--surface-sunken); color: var(--ink-faint);
+  }
+  .flow-desc { font-size: 13.5px; color: var(--ink-sub); }
+  .flow-desc code { font-size: 12.5px; }
+
+  code, .code-chip {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, monospace;
+    font-size: .92em;
+    background: var(--surface-sunken);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+  }
+
+  /* ===== Risk cards ===== */
+  .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .risk-grid { grid-template-columns: 1fr; } }
+  .risk-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px;
+  }
+  .risk-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .risk-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--caution); flex: none; }
+  .risk-title { font-size: 14px; font-weight: 700; }
+  .risk-body { font-size: 13px; color: var(--ink-sub); margin-bottom: 10px; }
+  .risk-fix {
+    font-size: 12.5px; background: var(--ok-tint); color: var(--ink);
+    border-left: 3px solid var(--ok); border-radius: 0 8px 8px 0;
+    padding: 8px 12px;
+  }
+  .risk-fix b { color: var(--ok); }
+
+  /* ===== Next steps ===== */
+  .next-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .next-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .next-check {
+    flex: none; width: 20px; height: 20px; border-radius: 6px; margin-top: 1px;
+    border: 1.8px solid var(--ink-faint);
+  }
+  .next-item.owner .next-check { border-color: var(--accent); background: var(--accent-tint); }
+  .next-text { font-size: 13.5px; }
+  .next-text b { font-weight: 700; }
+  .next-who {
+    font-size: 11px; font-weight: 700; color: var(--ink-faint);
+    margin-top: 3px;
+  }
+
+  footer.doc-footer {
+    margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-faint); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { max-width: none; padding: 0; }
+    section { break-inside: avoid; }
+  }
+
+  @media (max-width: 560px) {
+    .page { padding: 40px 18px 72px; }
+    h1.doc-title { font-size: 26px; }
+    .arch-node { width: 132px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-kicker">Architecture Decision Record</div>
+  <h1 class="doc-title">LX 온보딩 앱 — 배송지 자동 연동, 왜 이 방식으로 결정했는가</h1>
+  <p class="doc-summary">
+    입사자 맞춤 URL 발급부터 배송지 정보의 자동 시트 반영까지, 신규 비용·신규 계정 도입을 최소화하면서
+    담당자 교체·다수 대상자 처리에도 끊기지 않는 구조로 GitHub Pages와 Google Apps Script 조합을 채택합니다.
+  </p>
+
+  <div class="meta-strip">
+    <div class="meta-item">
+      <div class="meta-label">상태</div>
+      <div class="meta-value pill">검토 완료 · 채택</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">적용 대상</div>
+      <div class="meta-value">LX인터내셔널 프리보딩 웹앱</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">현재 단계</div>
+      <div class="meta-value">설계 확정 · 구현 착수 전</div>
+    </div>
+    <div class="meta-item" style="border-right:none;">
+      <div class="meta-label">추가 비용</div>
+      <div class="meta-value">월 0원</div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-eyebrow">01 — 배경</div>
+    <h2 class="sec-title">무엇을 해결해야 했는가</h2>
+    <p class="sec-lede">
+      현재 앱은 입사자 이름·출근일이 하드코딩된 프로토타입입니다. 실제 운영을 위해서는 다음 조건을 동시에
+      만족해야 했습니다.
+    </p>
+    <div class="risk-grid" style="margin-bottom:4px;">
+      <div class="risk-card" style="padding:16px 18px;">
+        <div class="risk-title" style="margin-bottom:6px;">담당자 비의존</div>
+        <div class="risk-body" style="margin-bottom:0;">특정 담당자 개인 계정·PC에 묶이지 않고, 담당자가 바뀌거나 여러 명이어도 그대로 운영 가능해야 함</div>
+      </div>
+      <div class="risk-card" style="padding:16px 18px;">
+        <div class="risk-title" style="margin-bottom:6px;">인원 수 무관 자동화</div>
+        <div class="risk-body" style="margin-bottom:0;">1명이든 여러 명이든 동일한 절차로 URL 발급·발송·수합이 처리돼야 함</div>
+      </div>
+      <div class="risk-card" style="padding:16px 18px;">
+        <div class="risk-title" style="margin-bottom:6px;">기기 간 상태 유지</div>
+        <div class="risk-body" style="margin-bottom:0;">입사자가 배송지를 제출한 뒤 다른 기기로 재접속해도 제출 여부가 그대로 보여야 함</div>
+      </div>
+      <div class="risk-card" style="padding:16px 18px;">
+        <div class="risk-title" style="margin-bottom:6px;">신규 비용 최소화</div>
+        <div class="risk-body" style="margin-bottom:0;">별도 유료 SaaS 도입 없이, 이미 있는 도구에 가깝게 구현</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-eyebrow">02 — 결정</div>
+    <h2 class="sec-title">GitHub Pages(파일 배포) + Google Apps Script(데이터 처리)</h2>
+    <p class="sec-lede">
+      두 서비스는 완전히 독립적으로 동작하며, 입사자의 브라우저가 페이지 로드 후 직접 GAS를 호출하는 것으로만 연결됩니다.
+      각각 "화면"과 "데이터"라는 역할을 정확히 나눠 맡습니다.
+    </p>
+
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node client">
+          <div class="arch-node-label">Browser</div>
+          <div class="arch-node-title">입사자</div>
+          <div class="arch-node-desc">개인화 링크로 접속</div>
+        </div>
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 5h20M16 1l5 4-5 4"/></svg>
+          <span class="arch-arrow-label">① 페이지 요청</span>
+        </div>
+        <div class="arch-node pages">
+          <div class="arch-node-label">Static Host</div>
+          <div class="arch-node-title">GitHub Pages</div>
+          <div class="arch-node-desc">HTML·CSS·JS 배포만<br>데이터 처리 없음</div>
+        </div>
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 5h20M16 1l5 4-5 4"/></svg>
+          <span class="arch-arrow-label">② fetch()</span>
+        </div>
+        <div class="arch-stack">
+          <div class="arch-node gas">
+            <div class="arch-node-label">Serverless</div>
+            <div class="arch-node-title">Apps Script</div>
+            <div class="arch-node-desc">조회·저장·메일발송</div>
+          </div>
+          <div class="arch-plus">↕</div>
+          <div class="arch-node sheet">
+            <div class="arch-node-label">Data Store</div>
+            <div class="arch-node-title">Google Sheets</div>
+            <div class="arch-node-desc">입사자 DB 겸 제출 기록</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:12.5px; color:var(--ink-faint); margin:0;">
+      ※ GitHub Pages와 GAS는 서로의 존재를 모릅니다 — 브라우저의 자바스크립트가 다리 역할을 할 뿐입니다.
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-eyebrow">03 — 검토한 대안</div>
+    <h2 class="sec-title">왜 다른 조합이 아닌가</h2>
+    <p class="sec-lede">호스팅과 백엔드 두 축에서 각각 대안을 비교했습니다. 강조된 행이 채택안입니다.</p>
+
+    <p style="font-size:13px; font-weight:700; color:var(--ink-sub); margin:0 0 8px;">정적 파일 호스팅</p>
+    <div class="table-wrap" style="margin-bottom:28px;">
+      <table>
+        <thead><tr><th>후보</th><th>담당자 교체 대응</th><th>이 프로젝트 비용</th><th>판단</th></tr></thead>
+        <tbody>
+          <tr class="row-chosen">
+            <td>GitHub Pages</td>
+            <td>조직(Organization) 계정 — 무료로 소유권 이전 없이 승계</td>
+            <td class="num">0원</td>
+            <td><span class="verdict good">채택</span></td>
+          </tr>
+          <tr>
+            <td>Vercel</td>
+            <td>무료(Hobby) 요금제는 회사·상업적 사용 자체가 약관 위반</td>
+            <td class="num">2인 기준 월 40달러~</td>
+            <td><span class="verdict bad">제외</span></td>
+          </tr>
+          <tr>
+            <td>Netlify</td>
+            <td>무료 요금제는 팀원 추가 자체가 불가능</td>
+            <td class="num">월 20달러~</td>
+            <td><span class="verdict bad">제외</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:13px; font-weight:700; color:var(--ink-sub); margin:0 0 8px;">데이터 처리·자동화</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>후보</th><th>외부인 익명 제출 수신</th><th>비용</th><th>판단</th></tr></thead>
+        <tbody>
+          <tr class="row-chosen">
+            <td>Google Apps Script</td>
+            <td>“누구나(익명 포함)” 배포로 무료 지원</td>
+            <td class="num">0원</td>
+            <td><span class="verdict good">채택</span></td>
+          </tr>
+          <tr>
+            <td>Power Automate</td>
+            <td>외부 요청을 받는 HTTP 트리거가 프리미엄 전용 기능</td>
+            <td class="num">별도 라이선스 필요</td>
+            <td><span class="verdict bad">보류</span></td>
+          </tr>
+          <tr>
+            <td>Excel VBA 매크로</td>
+            <td>구조적으로 불가 — 서버처럼 요청을 받는 기능 자체가 없음</td>
+            <td class="num">—</td>
+            <td><span class="verdict bad">제외</span></td>
+          </tr>
+          <tr>
+            <td>Google Forms 연동</td>
+            <td>가능(완전 무료·무코드)하나 커스텀 디자인·주소검색 UI 포기 필요</td>
+            <td class="num">0원</td>
+            <td><span class="verdict bad">보류</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-eyebrow">04 — 비용</div>
+    <h2 class="sec-title">월 고정비 0원</h2>
+    <div class="cost-row">
+      <div class="cost-card chosen">
+        <div class="cost-figure">0<span class="unit">원 / 월</span></div>
+        <div class="cost-label">채택안 — GitHub 조직 + GAS 전용 계정</div>
+      </div>
+      <div class="cost-card">
+        <div class="cost-figure">40<span class="unit">달러~ / 월</span></div>
+        <div class="cost-label">Vercel Team 2인 기준</div>
+      </div>
+      <div class="cost-card">
+        <div class="cost-figure">20<span class="unit">달러~ / 월</span></div>
+        <div class="cost-label">Netlify Pro / Power Automate 추가 라이선스</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-eyebrow">05 — 전체 흐름</div>
+    <h2 class="sec-title">입사자 정보 입력부터 시트 반영까지</h2>
+    <ol class="flow-list">
+      <li class="flow-item">
+        <div class="flow-rail"><div class="flow-num">1</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">Google Sheets에 입사자 정보 입력</div>
+          <div class="flow-desc">이름·출근일 등을 담당자가 행으로 추가 (Excel과 동일한 사용 경험)</div>
+        </div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-rail"><div class="flow-num">2</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">개인화 URL 자동 생성</div>
+          <div class="flow-desc">행 추가 즉시 수식으로 <code>index.html#t=고유토큰</code> 형태 링크가 만들어짐</div>
+        </div>
+      </li>
+      <li class="flow-item optional">
+        <div class="flow-rail"><div class="flow-num">3</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">안내 메일 발송 <span class="flow-tag">현재 단계 선택사항</span></div>
+          <div class="flow-desc">회사 공식 메일 계정으로 발송 (GAS 전용 계정이 아님 — 06 참고)</div>
+        </div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-rail"><div class="flow-num">4</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">입사자가 링크 접속</div>
+          <div class="flow-desc">GitHub Pages가 서빙, GAS가 토큰으로 이름·출근일을 조회해 화면에 반영</div>
+        </div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-rail"><div class="flow-num">5</div><div class="flow-connector"></div></div>
+        <div class="flow-body">
+          <div class="flow-title">체크리스트 확인 · 배송지 입력 후 저장</div>
+          <div class="flow-desc">제출 여부가 GAS에 기록되어, 다른 기기로 재접속해도 “이미 제출됨”으로 표시</div>
+        </div>
+      </li>
+      <li class="flow-item">
+        <div class="flow-rail"><div class="flow-num">6</div></div>
+        <div class="flow-body">
+          <div class="flow-title">Sheets에 실시간 반영</div>
+          <div class="flow-desc">담당자는 별도 작업 없이 Sheets에서 바로 확인, 필요 시 엑셀로 다운로드</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-eyebrow">06 — 계정 운영 방식</div>
+    <h2 class="sec-title">전용 계정 1개, 로그인은 관리자만</h2>
+    <p class="sec-lede">
+      계정 하나를 여러 명이 로그인해서 함께 쓰는 방식이 아니라, <b style="color:var(--ink)">로그인 자체는 관리자 1명만</b> 하고
+      나머지 담당자는 문서 공유로 참여하는 구조입니다. Google 계정 정책(“계정은 한 사람이 사용”이 원칙)과 충돌하지 않으면서도
+      여러 담당자가 실질적으로 함께 작업할 수 있습니다.
+    </p>
+
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node admin">
+          <div class="arch-node-label">Google Account</div>
+          <div class="arch-node-title">전용 계정 1개</div>
+          <div class="arch-node-desc">로그인은 관리자 1명만<br>(GAS 배포 등 드문 작업 전용)</div>
+        </div>
+        <div class="arch-arrow">
+          <svg viewBox="0 0 24 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M1 5h20M16 1l5 4-5 4"/></svg>
+          <span class="arch-arrow-label">Sheet 편집자 공유</span>
+        </div>
+        <div class="person-stack">
+          <div class="person-chip"><b>담당자 A</b><span>본인 개인 계정으로 접근</span></div>
+          <div class="person-chip"><b>담당자 B</b><span>본인 개인 계정으로 접근</span></div>
+          <div class="person-chip"><b>담당자 C</b><span>본인 개인 계정으로 접근</span></div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size:12.5px; color:var(--ink-faint); margin:0 0 20px;">
+      ※ 평소 업무(입사자 추가, 제출 현황 확인)는 각자 자기 계정으로 하고, 전용 계정 로그인은 스크립트 재배포 등
+      드문 관리 작업에만 사용합니다. 담당자 교체 시에도 Sheet 공유 목록만 갱신하면 됩니다.
+    </p>
+
+    <div class="risk-grid">
+      <div class="risk-card" style="padding:16px 18px;">
+        <div class="risk-title" style="margin-bottom:6px;">가입 유형 선택은 결과에 영향 없음</div>
+        <div class="risk-body" style="margin-bottom:0;">계정 생성 시 “개인용” / “비즈니스 관리용” 중 무엇을 선택해도 계정 기능·종류는 완전히 동일함을 확인함</div>
+      </div>
+      <div class="risk-card" style="padding:16px 18px;">
+        <div class="risk-title" style="margin-bottom:6px;">안내 메일 자동 발송은 채택하지 않음</div>
+        <div class="risk-body" style="margin-bottom:0;">Gmail 주소로 발송 시 “보낸사람”이 그대로 노출돼 신뢰도 문제 우려 → 안내 메일은 계속 회사 공식 계정으로 발송하고, GAS는 데이터 처리만 전담</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-eyebrow">07 — 리스크와 완화</div>
+    <h2 class="sec-title">담당자 교체 시 무엇이 남는가</h2>
+    <div class="risk-grid">
+      <div class="risk-card">
+        <div class="risk-head"><div class="risk-dot"></div><div class="risk-title">GAS는 배포 계정에 실행이 묶임</div></div>
+        <div class="risk-body">GitHub Pages와 달리, 배포한 계정이 비활성화되면 실제로 스크립트가 멈출 수 있음</div>
+        <div class="risk-fix"><b>완화:</b> 특정 개인이 아닌 이 프로젝트 전용 구글 계정을 만들어 소유·배포</div>
+      </div>
+      <div class="risk-card">
+        <div class="risk-head"><div class="risk-dot"></div><div class="risk-title">회사 공식 IT 자산 밖의 계정</div></div>
+        <div class="risk-body">현재 사내 메일(@lxintl.co.kr)은 Google Workspace가 아닌 것으로 확인됨</div>
+        <div class="risk-fix"><b>완화:</b> 전용 계정 생성을 사전에 보고·문서화해 회사 공식 자산으로 관리</div>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom:0;">
+    <div class="sec-eyebrow">08 — 다음 단계</div>
+    <h2 class="sec-title">승인 및 착수 필요 항목</h2>
+    <ul class="next-list">
+      <li class="next-item owner">
+        <div class="next-check"></div>
+        <div>
+          <div class="next-text"><b>GitHub Organization</b> 생성 승인</div>
+          <div class="next-who">담당자 확인 필요 · 무료</div>
+        </div>
+      </li>
+      <li class="next-item owner">
+        <div class="next-check"></div>
+        <div>
+          <div class="next-text">이 프로젝트 전용 <b>Gmail 계정</b> 생성 승인 (역할 기반 이름, 로그인은 관리자 1명)</div>
+          <div class="next-who">담당자 확인 필요 · 무료</div>
+        </div>
+      </li>
+      <li class="next-item">
+        <div class="next-check"></div>
+        <div>
+          <div class="next-text">Sheet 편집자로 공유할 담당자 목록 확정</div>
+          <div class="next-who">담당자 확인 필요</div>
+        </div>
+      </li>
+    </ul>
+    <p style="font-size:12.5px; color:var(--ink-faint); margin:16px 0 0;">
+      ※ "URL을 토큰 방식으로 전환 + GAS doGet/doPost 스크립트 작성"은 완료되어 이 목록에서
+      제외했습니다 — <code>docs/gas-code.gs</code>로 구현·배포되어 현재 운영 중입니다.
+    </p>
+  </section>
+
+  <footer class="doc-footer">
+    <span>LX인터내셔널 프리보딩 웹앱 · 아키텍처 결정 기록</span>
+    <span>2026-07</span>
+  </footer>
+
+</div>
+</body>
+</html>
