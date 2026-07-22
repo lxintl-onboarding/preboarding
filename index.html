@@ -202,16 +202,23 @@
   .video-card {
     background: #2A2422;
     border-radius: var(--radius);
-    overflow: hidden;
+    color: #fff;
+    padding: 34px 20px 26px;
+    text-align: center;
     margin-bottom: 18px;
   }
-  .ceo-video {
-    display: block;
-    width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-    background: #000;
+  .play-btn {
+    width: 62px; height: 62px; border-radius: 50%;
+    background: var(--brand); border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    transition: transform .15s;
   }
+  .play-btn:hover { transform: scale(1.06); }
+  .play-btn:focus-visible { outline: 3px solid rgba(255,255,255,.5); }
+  .play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
+  .video-card h3 { font-size: 17.5px; font-weight: 700; margin-bottom: 8px; }
+  .video-card p { font-size: 13.5px; color: rgba(255,255,255,.65); line-height: 1.6; }
 
   .welcome-note {
     background: linear-gradient(150deg, var(--brand) 0%, var(--brand-dark) 100%);
@@ -787,10 +794,11 @@
       <p class="panel-desc">대표이사가 새로운 동료에게 전하는 진심 어린 환영의 메시지를 영상으로 확인해 보세요.</p>
 
       <div class="video-card">
-        <video class="ceo-video" controls playsinline preload="metadata">
-          <source src="assets/MicrosoftTeams-video.mp4" type="video/mp4">
-          이 브라우저는 video 태그를 지원하지 않습니다.
-        </video>
+        <button class="play-btn" aria-label="CEO 입사 축하 영상 재생" onclick="playVideo()">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <h3>CEO 입사 축하 영상</h3>
+        <p>영상 링크가 등록되면 이곳에서 바로 재생됩니다.<br>(현재는 준비 중)</p>
       </div>
 
       <div class="welcome-section">
@@ -1986,6 +1994,11 @@ modal.addEventListener('click', function (e) {
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') modal.classList.remove('show');
 });
+
+/* ================= Video placeholder ================= */
+function playVideo() {
+  showToast('영상이 준비 중입니다. 곧 만나보실 수 있어요!');
+}
 
 /* ================= Toast ================= */
 var toastTimer;
