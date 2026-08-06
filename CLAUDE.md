@@ -81,13 +81,15 @@ lx-onboarding/
 
 | 위치 | 역할 |
 |---|---|
-| `personalizeHero()` (IIFE) | URL 토큰(`#t=`)으로 GAS를 조회해 이름·출근일·담당자·제출여부를 개인화 |
+| `personalizeHero()` (IIFE) | URL 토큰(`#t=`)으로 GAS를 조회해 이름·출근일·담당자·소속팀·제출여부를 개인화 |
+| `renderWelcomeNote(name, team)` | 소속팀이 있을 때 `WELCOME_TEMPLATE`의 `{{이름}}`/`{{팀}}`을 치환해 환영 인사 문구 교체 |
 | `updateProgress(animate)` | 세그먼트 진행률 + 분수 표기 + NEXT 강조 + 100% 축하 트리거 |
 | `highlightNext()` | 미완료 항목 중 첫 번째에 NEXT 뱃지 |
 | `renderDday(dateStr)` | 주어진 날짜로 D-Day 계산·렌더. 토큰 조회 성공 시 실제 출근일로 재호출됨 |
 | `initDocs()` | 구비서류 9종 ↔ 상위 To-Do 양방향 동기화 |
 | `openPostcode()` | Daum 우편번호 서비스 팝업 |
 | `giftForm` submit 핸들러 | 배송지 폼을 GAS로 POST 저장 (토큰 없으면 localStorage에만 임시 저장) |
+| `hrContact` 클릭 핸들러 | 하단 "인사팀" 클릭 시 `HR_EMAIL`을 클립보드에 복사 + 토스트로 안내 (탭 밖 공통 요소라 4탭 전부 동일 적용) |
 | `celebrate()` | 컨페티 canvas + 축하 모달 |
 
 ### 주의사항
@@ -107,13 +109,19 @@ lx-onboarding/
 2. 시트 메뉴 **"온보딩 관리 → 새 입사자 링크 생성"** 실행
    (`docs/gas-code.gs`의 `generateTokensAndLinks()` — 이름은 있는데 토큰이 비어있는 행만 채움)
 3. 자동 생성된 개인화 링크(`index.html#t=토큰&name=...&date=...`)를 입사자에게 전달
-4. 입사자가 링크로 접속하면 페이지가 토큰으로 GAS를 조회해 이름·출근일·담당자 정보를
-   자동으로 채우고, 배송지 제출 여부도 기기를 바꿔도 유지됩니다
+4. 입사자가 링크로 접속하면 페이지가 토큰으로 GAS를 조회해 이름·출근일·담당자·**소속팀**
+   정보를 자동으로 채우고, 배송지 제출 여부도 기기를 바꿔도 유지됩니다
+   (소속팀이 있으면 "동료들의 환영 인사" 문구도 `WELCOME_TEMPLATE`으로 자동 개인화됨 —
+   비어 있으면 기존 범용 문구가 그대로 표시됨)
 
 **주의**: `docs/gas-code.gs`는 Sheet 1행(헤더)의 텍스트를 `COL` 매핑 기준으로 찾습니다
-(`입사자`, `출근일`, `담당자`, `담당자연락처` 등). **Sheet에서 헤더 이름을 바꾸거나 열을
-삭제하면 스크립트가 통째로 깨집니다.** 헤더를 바꿔야 한다면 `gas-code.gs`의 `COL` 값도
+(`입사자`, `출근일`, `담당자`, `담당자연락처`, `소속팀` 등). **Sheet에서 헤더 이름을 바꾸거나
+열을 삭제하면 스크립트가 통째로 깨집니다.** 헤더를 바꿔야 한다면 `gas-code.gs`의 `COL` 값도
 반드시 같이 수정하세요.
+
+**주의 2**: `docs/gas-code.gs`를 고쳐서 GitHub에 push해도 **실제 배포된 Apps Script는
+자동으로 갱신되지 않습니다.** script.google.com에서 배포본 코드를 수동으로 교체하고
+재배포해야 실제로 반영됩니다.
 
 ```javascript
 var FIRST_DAY  = '2026-06-22';   // 미리보기(토큰 없이 접속 시) 기본값

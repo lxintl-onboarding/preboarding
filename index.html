@@ -489,6 +489,7 @@
   .todo .txt { flex: 1 1 0; min-width: 0; }
   .todo .txt h4 { font-size: 15.5px; font-weight: 700; transition: color .2s; }
   .todo .txt p { font-size: 14px; color: var(--ink-sub); margin-top: 3px; line-height: 1.6; }
+  .todo .txt p .tip { display: block; margin-top: 4px; font-size: 12.5px; color: var(--ink-faint); }
   .todo.done .txt h4 { color: var(--ink-faint); text-decoration: line-through; text-decoration-thickness: 1.5px; }
   .todo:focus-within { outline: 2px solid var(--brand); outline-offset: 2px; }
 
@@ -764,6 +765,11 @@
     padding: 26px 20px 34px;
   }
   .footer strong { color: var(--brand); font-weight: 700; }
+  .hr-contact {
+    all: unset; cursor: pointer;
+    color: var(--brand); font-weight: 700;
+    text-underline-offset: 2px; text-decoration: underline dotted;
+  }
 </style>
 </head>
 <body>
@@ -804,13 +810,13 @@
       <div class="welcome-section">
         <div class="eyebrow">Welcome Note</div>
         <h2 class="panel-title">동료들의 환영 인사</h2>
-        <p class="panel-desc">새로운 동료를 향한 임직원들의 마음을 먼저 전해드려요.</p>
+        <p class="panel-desc">새로운 동료를 향한 팀원들의 마음을 먼저 전해드려요.</p>
         <div class="welcome-note">
           <blockquote>
-            "LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
+            <span id="welcomeNoteText">"LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
             여러분의 도전과 열정이 우리의 내일을 더 단단하게 만들 것이라 믿습니다.
-            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."
-            <span class="sign">— LX인터내셔널 임직원 일동</span>
+            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."</span>
+            <span class="sign" id="welcomeNoteSign">— LX인터내셔널 임직원 일동</span>
           </blockquote>
         </div>
       </div>
@@ -927,7 +933,7 @@
           <input type="checkbox" data-key="gift">
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="1.5"></rect><path d="M3 8h18M12 8v13M7.5 8a2.5 2.5 0 010-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 010 5"></path></svg></span>
           <span class="txt">
-            <h4>웰컴 키트·배송지 입력</h4>
+            <h4>입사 축하 선물·배송지 입력</h4>
             <p>아래 폼에서 받으실 주소를 등록해 주세요. 첫 출근 전 도착하도록 발송합니다.</p>
           </span>
           <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
@@ -1022,7 +1028,9 @@
           <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a2 2 0 012 2c0 .9-.6 1.6-1.4 1.9L12 7l-.6-.1A2 2 0 0110 5a2 2 0 012-2z"></path><path d="M12 7l8.5 5.2c.9.5.6 1.8-.4 1.8H17v6H7v-6H3.9c-1 0-1.3-1.3-.4-1.8L12 7z"></path></svg></span>
           <span class="txt">
             <h4>복장·준비물 체크</h4>
-            <p>출근 복장은 <b>자율 복장</b>입니다. 첫날 필요한 소지품을 미리 챙겨주세요.</p>
+            <p>출근 복장은 <b>자율 복장</b>입니다. 첫날 필요한 구비서류 등 준비물을 미리 챙겨주세요.
+              <span class="tip">Tip. 복장이 고민되면 [참고 정보] 탭의 '출근룩 가이드'를 확인해 보세요.</span>
+            </p>
           </span>
           <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
         </label>
@@ -1032,8 +1040,8 @@
       <!-- ===== Gift delivery form ===== -->
       <div class="gift-section">
         <div class="eyebrow">Gift Delivery</div>
-        <h2 class="panel-title">웰컴 기프트 배송지</h2>
-        <p class="panel-desc">입사를 축하하는 웰컴 기프트를 보내드려요. 받으실 주소를 입력해 주세요.</p>
+        <h2 class="panel-title">입사 축하 선물 배송지</h2>
+        <p class="panel-desc">입사 축하 선물을 보내드려요. 받으실 주소를 입력해 주세요.</p>
 
         <form class="card gift-card" id="giftForm" novalidate>
           <div class="field">
@@ -1343,11 +1351,11 @@
               <a href="https://blog.naver.com/PostList.naver?blogId=lxinternational&amp;categoryNo=12&amp;skinType=&amp;skinId=&amp;from=menu&amp;userSelectMenu=true" target="_blank" rel="noopener" aria-label="LX인터내셔널 블로그"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 8h6M7 12h10M7 16h10"></path></svg></a>
             </span>
           </div>
-          <a class="card link-row" href="https://lx.recruiter.co.kr/career/home-1" target="_blank" rel="noopener">
+          <a class="card link-row" href="https://lx.recruiter.co.kr/career/about" target="_blank" rel="noopener">
             <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4a1 1 0 001 1h2l10 5V4L6 9H4a1 1 0 00-1 1z"></path><path d="M17 9a4 4 0 010 6"></path></svg></span>
             <span class="link-txt">
-              <h4>LX그룹 이야기</h4>
-              <p>추가적으로 LX그룹의 이야기를 만나보세요.</p>
+              <h4>LX 人 이야기</h4>
+              <p>추가적으로 LX 人의 이야기를 만나보세요.</p>
             </span>
             <span class="link-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></span>
           </a>
@@ -1357,7 +1365,7 @@
 
     <footer class="footer">
       이 앱은 LX인터내셔널 신규 입사자를 위해 준비되었습니다.<br>
-      궁금한 점은 언제든 <strong>인사팀</strong>으로 문의해 주세요.
+      궁금한 점은 언제든 <button type="button" class="hr-contact" id="hrContact">인사팀</button>으로 문의해 주세요.
     </footer>
   </div>
 
@@ -1405,6 +1413,19 @@ var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyN77jvNGXv50Zm925B0
 var LX_TOKEN = null;
 var DDAY_FROM_URL = false;
 
+/* 팀 자동 반영 환영 메시지. {{이름}}/{{팀}}은 GAS에서 받은 실제 값으로 치환됩니다.
+   Sheet에 소속팀이 비어 있으면 이 템플릿을 쓰지 않고 HTML의 기본 문구(전사 공통)를
+   그대로 둡니다 — 나중에 팀별로 실제 메시지를 받으면 이 템플릿 문자열만 교체하면 됩니다. */
+var WELCOME_TEMPLATE = '"{{이름}}님, {{팀}}에 함께하게 되신 걸 진심으로 환영합니다. ' +
+  '{{팀}}에서 생각하시는 모든 일들을 해 나아가며 함께 성장하면 좋겠습니다. ' +
+  '다시 한 번 {{이름}}님의 합류를 환영하며, 입사 날 뵙겠습니다."';
+
+function renderWelcomeNote(name, team) {
+  var msg = WELCOME_TEMPLATE.replace(/\{\{이름\}\}/g, name).replace(/\{\{팀\}\}/g, team);
+  document.getElementById('welcomeNoteText').textContent = msg;
+  document.getElementById('welcomeNoteSign').textContent = '— LX인터내셔널 ' + team + ' 일동';
+}
+
 (function personalizeHero() {
   function getParam(key) {
     var hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
@@ -1439,6 +1460,7 @@ var DDAY_FROM_URL = false;
         phoneEl.textContent = data.contactPhone;
         phoneEl.href = 'tel:' + data.contactPhone;
       }
+      if (data.team && data.name) renderWelcomeNote(data.name, data.team);
     })
     .catch(function () { /* 조회 실패 시 기본값 유지 */ });
 })();
@@ -1457,6 +1479,19 @@ tabs.forEach(function (tab) {
     document.getElementById(tab.dataset.panel).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+});
+
+/* ================= 하단 인사팀 문의 ================= */
+/* 푸터가 탭 밖(공통 영역)에 있어 4개 탭 어디서든 동일하게 동작합니다. */
+var HR_EMAIL = 'drleea@lxintl.co.kr';
+document.getElementById('hrContact').addEventListener('click', function () {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(HR_EMAIL)
+      .then(function () { showToast('이메일 주소가 복사되었어요: ' + HR_EMAIL); })
+      .catch(function () { showToast('인사팀 문의: ' + HR_EMAIL); });
+  } else {
+    showToast('인사팀 문의: ' + HR_EMAIL);
+  }
 });
 
 /* ================= Checklist + progress ================= */

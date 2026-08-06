@@ -14,6 +14,7 @@ var COL = {
   PHONE: '연락처',
   CONTACT_NAME: '담당자',
   CONTACT_PHONE: '담당자연락처',
+  TEAM: '소속팀',
   HIRE_TYPE: '입사구분',
   ZIP: '우편번호',
   ADDR1: '주소',
@@ -141,7 +142,8 @@ function doGet(e) {
     startDate: toIsoDate_(get(COL.START_DATE)),
     submitted: get(COL.SUBMITTED) === true || get(COL.SUBMITTED) === 'TRUE',
     contactName: get(COL.CONTACT_NAME),
-    contactPhone: get(COL.CONTACT_PHONE)
+    contactPhone: get(COL.CONTACT_PHONE),
+    team: get(COL.TEAM)
   });
 }
 
