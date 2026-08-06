@@ -231,7 +231,6 @@
   .welcome-note blockquote {
     font-size: 15.5px; line-height: 1.8; font-weight: 500;
   }
-  #welcomeNoteText { white-space: pre-line; } /* Sheet 셀의 줄바꿈을 그대로 반영 (innerHTML 없이 안전하게) */
   .welcome-note .sign {
     display: block; margin-top: 14px;
     font-size: 14px; opacity: .85; font-weight: 600;
@@ -814,10 +813,10 @@
         <p class="panel-desc">새로운 동료를 향한 팀원들의 마음을 먼저 전해드려요.</p>
         <div class="welcome-note">
           <blockquote>
-            <span id="welcomeNoteText">"LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
+            "LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
             여러분의 도전과 열정이 우리의 내일을 더 단단하게 만들 것이라 믿습니다.
-            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."</span>
-            <span class="sign" id="welcomeNoteSign">— LX인터내셔널 임직원 일동</span>
+            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."
+            <span class="sign">— LX인터내셔널 임직원 일동</span>
           </blockquote>
         </div>
       </div>
@@ -1414,25 +1413,6 @@ var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyN77jvNGXv50Zm925B0
 var LX_TOKEN = null;
 var DDAY_FROM_URL = false;
 
-/* 환영 인사 문구 3단계
-   1) 소속팀·환영메시지 모두 없음 → HTML의 기본 문구(전사 공통) 그대로 유지
-   2) 소속팀만 있음 → 아래 템플릿에 이름·팀명을 치환해서 보여줌
-   3) 환영메시지(Sheet에서 팀별로 직접 받은 문구)가 있음 → 그 문구를 그대로 사용
-      (팀이 이미 이름을 넣어 작성하는 걸 전제하므로 치환 없이 그대로 표시) */
-var WELCOME_TEMPLATE = '"{{이름}}님, {{팀}}에 함께하게 되신 걸 진심으로 환영합니다. ' +
-  '{{팀}}에서 생각하시는 모든 일들을 해 나아가며 함께 성장하면 좋겠습니다. ' +
-  '다시 한 번 {{이름}}님의 합류를 환영하며, 입사 날 뵙겠습니다."';
-
-function renderWelcomeSign(team) {
-  document.getElementById('welcomeNoteSign').textContent = '— LX인터내셔널 ' + team + ' 일동';
-}
-
-function renderWelcomeNote(name, team) {
-  var msg = WELCOME_TEMPLATE.replace(/\{\{이름\}\}/g, name).replace(/\{\{팀\}\}/g, team);
-  document.getElementById('welcomeNoteText').textContent = msg;
-  renderWelcomeSign(team);
-}
-
 (function personalizeHero() {
   function getParam(key) {
     var hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
@@ -1466,12 +1446,6 @@ function renderWelcomeNote(name, team) {
         var phoneEl = document.getElementById('contactPhone');
         phoneEl.textContent = data.contactPhone;
         phoneEl.href = 'tel:' + data.contactPhone;
-      }
-      if (data.message) {
-        document.getElementById('welcomeNoteText').textContent = data.message;
-        if (data.team) renderWelcomeSign(data.team);
-      } else if (data.team && data.name) {
-        renderWelcomeNote(data.name, data.team);
       }
     })
     .catch(function () { /* 조회 실패 시 기본값 유지 */ });
