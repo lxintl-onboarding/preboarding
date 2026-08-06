@@ -15,6 +15,7 @@ var COL = {
   CONTACT_NAME: '담당자',
   CONTACT_PHONE: '담당자연락처',
   TEAM: '소속팀',
+  WELCOME_MSG: '환영메시지',
   HIRE_TYPE: '입사구분',
   ZIP: '우편번호',
   ADDR1: '주소',
@@ -143,7 +144,8 @@ function doGet(e) {
     submitted: get(COL.SUBMITTED) === true || get(COL.SUBMITTED) === 'TRUE',
     contactName: get(COL.CONTACT_NAME),
     contactPhone: get(COL.CONTACT_PHONE),
-    team: get(COL.TEAM)
+    team: get(COL.TEAM),
+    message: get(COL.WELCOME_MSG)
   });
 }
 
