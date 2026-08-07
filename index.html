@@ -1417,6 +1417,14 @@ var GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyN77jvNGXv50Zm925B0
 var LX_TOKEN = null;
 var DDAY_FROM_URL = false;
 
+/* 환영 인사 본문이 아직 없을 때(환영메시지 미입력) 쓰는 템플릿.
+   {{이름}}/{{팀}}은 실제 값으로 치환됩니다. 환영메시지가 채워지면 이 템플릿
+   대신 그 문구를 그대로 씁니다 — 즉 "완전 범용 문구"보다 한 단계 더
+   개인화된 중간 폴백입니다. */
+var WELCOME_TEMPLATE = '"{{이름}}님, {{팀}}에 함께하게 되신 걸 진심으로 환영합니다. ' +
+  '{{팀}}에서 생각하시는 모든 일들을 해 나아가며 함께 성장하면 좋겠습니다. ' +
+  '다시 한 번 {{이름}}님의 합류를 환영하며, 입사 날 뵙겠습니다."';
+
 (function personalizeHero() {
   function getParam(key) {
     var hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
@@ -1460,7 +1468,12 @@ var DDAY_FROM_URL = false;
         toEl.hidden = false;
       }
       if (data.team) document.getElementById('welcomeNoteSign').textContent = '— LX인터내셔널 ' + data.team + ' 일동';
-      if (data.message) document.getElementById('welcomeNoteText').textContent = data.message;
+      if (data.message) {
+        document.getElementById('welcomeNoteText').textContent = data.message;
+      } else if (data.name && data.team) {
+        document.getElementById('welcomeNoteText').textContent =
+          WELCOME_TEMPLATE.replace(/\{\{이름\}\}/g, data.name).replace(/\{\{팀\}\}/g, data.team);
+      }
     })
     .catch(function () { /* 조회 실패 시 기본값 유지 */ });
 })();
