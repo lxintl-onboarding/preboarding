@@ -228,8 +228,13 @@
     margin-bottom: 18px;
   }
   .welcome-section { margin-top: 32px; }
+  .welcome-note .to {
+    margin: 0 0 10px;
+    font-size: 14px; opacity: .85; font-weight: 600;
+  }
   .welcome-note blockquote {
     font-size: 15.5px; line-height: 1.8; font-weight: 500;
+    white-space: pre-line; /* Sheet 셀의 줄바꿈을 그대로 반영 (innerHTML 없이 안전하게) */
   }
   .welcome-note .sign {
     display: block; margin-top: 14px;
@@ -812,12 +817,11 @@
         <h2 class="panel-title">동료들의 환영 인사</h2>
         <p class="panel-desc">새로운 동료를 향한 팀원들의 마음을 먼저 전해드려요.</p>
         <div class="welcome-note">
-          <blockquote>
-            "LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
+          <p class="to" id="welcomeTo" hidden></p>
+          <blockquote id="welcomeNoteText">"LX인터내셔널의 새로운 여정에 함께하게 된 여러분을 진심으로 환영합니다.
             여러분의 도전과 열정이 우리의 내일을 더 단단하게 만들 것이라 믿습니다.
-            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."
-            <span class="sign">— LX인터내셔널 임직원 일동</span>
-          </blockquote>
+            첫걸음을 응원하며, 우리 함께 성장해 나갑시다."</blockquote>
+          <span class="sign" id="welcomeNoteSign">— LX인터내셔널 임직원 일동</span>
         </div>
       </div>
 
@@ -1447,6 +1451,16 @@ var DDAY_FROM_URL = false;
         phoneEl.textContent = data.contactPhone;
         phoneEl.href = 'tel:' + data.contactPhone;
       }
+      /* 환영 인사는 3섹션(To/본문/From)으로 표시. 이름·소속팀은 토큰 조회가
+         성공하면 항상 같이 채워짐(팀 배정 없이는 링크를 안 보내는 운영 전제) —
+         환영메시지만 팀에서 나중에 따로 받아 채우는 값이라 별도로 처리 */
+      if (data.name) {
+        var toEl = document.getElementById('welcomeTo');
+        toEl.textContent = 'To. ' + data.name + '님';
+        toEl.hidden = false;
+      }
+      if (data.team) document.getElementById('welcomeNoteSign').textContent = '— LX인터내셔널 ' + data.team + ' 일동';
+      if (data.message) document.getElementById('welcomeNoteText').textContent = data.message;
     })
     .catch(function () { /* 조회 실패 시 기본값 유지 */ });
 })();
@@ -1469,7 +1483,7 @@ tabs.forEach(function (tab) {
 
 /* ================= 하단 인사팀 문의 ================= */
 /* 푸터가 탭 밖(공통 영역)에 있어 4개 탭 어디서든 동일하게 동작합니다. */
-var HR_EMAIL = 'drleea@lxintl.co.kr';
+var HR_EMAIL = 'recruit@lxintl.co.kr';
 document.getElementById('hrContact').addEventListener('click', function () {
   if (navigator.clipboard) {
     navigator.clipboard.writeText(HR_EMAIL)
