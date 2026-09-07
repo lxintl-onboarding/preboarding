@@ -199,26 +199,52 @@
   }
 
   /* ===== Tab 1: Welcome ===== */
-  .video-card {
-    background: #2A2422;
+  .ceo-message {
+    position: relative;
+    background: var(--brand-light);
     border-radius: var(--radius);
-    color: #fff;
-    padding: 34px 20px 26px;
-    text-align: center;
+    padding: 32px 20px 26px;
     margin-bottom: 18px;
   }
-  .play-btn {
-    width: 62px; height: 62px; border-radius: 50%;
-    background: var(--brand); border: none; cursor: pointer;
-    display: inline-flex; align-items: center; justify-content: center;
-    margin-bottom: 16px;
-    transition: transform .15s;
+  .ceo-message-mark {
+    position: absolute;
+    top: 6px; left: 18px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--brand-mid);
+    opacity: .35;
+    line-height: 1;
+    pointer-events: none;
   }
-  .play-btn:hover { transform: scale(1.06); }
-  .play-btn:focus-visible { outline: 3px solid rgba(255,255,255,.5); }
-  .play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
-  .video-card h3 { font-size: 17.5px; font-weight: 700; margin-bottom: 8px; }
-  .video-card p { font-size: 13.5px; color: rgba(255,255,255,.65); line-height: 1.6; }
+  .ceo-message-text {
+    position: relative;
+    margin-top: 26px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--ink);
+    white-space: pre-line;
+  }
+  .ceo-message-sign {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .ceo-message-sign .role {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-faint);
+  }
+  .ceo-message-sign .name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: .06em;
+  }
 
   .welcome-note {
     background: linear-gradient(150deg, var(--brand) 0%, var(--brand-dark) 100%);
@@ -801,15 +827,26 @@
     <!-- ================= Panel 1 : 환영 인사 ================= -->
     <section class="panel active" id="panel-welcome" role="tabpanel" aria-labelledby="tab-welcome">
       <div class="eyebrow">CEO Message</div>
-      <h2 class="panel-title">CEO의 입사 축하 영상</h2>
-      <p class="panel-desc">대표이사가 새로운 동료에게 전하는 진심 어린 환영의 메시지를 영상으로 확인해 보세요.</p>
+      <h2 class="panel-title">대표이사 축하 메시지</h2>
+      <p class="panel-desc">대표이사가 새로운 동료에게 전하는 진심 어린 축하의 말씀을 전해드립니다.</p>
 
-      <div class="video-card">
-        <button class="play-btn" aria-label="CEO 입사 축하 영상 재생" onclick="playVideo()">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        <h3>CEO 입사 축하 영상</h3>
-        <p>영상 링크가 등록되면 이곳에서 바로 재생됩니다.</p>
+      <div class="ceo-message">
+        <span class="ceo-message-mark" aria-hidden="true">&ldquo;</span>
+        <p class="ceo-message-text">LX인터내셔널의 일원이 되신 것을 진심으로 축하합니다.
+여러 갈래의 길 가운데 우리와 함께하기로 결정해 주셔서 고맙습니다.
+
+LX인터내셔널은 식량과 에너지 같은 세상에 없어서는 안 될 자원을 공급하는 회사입니다. 그 안에서 고객과 함께 새로운 사업의 답을 찾아가고 있습니다.
+정해진 길을 따르기보다는 한 발 앞서 생각하고 움직이며 우리만의 길을 만들어 왔고 이제 그 여정에 새로운 이름 하나가 더해져 기쁩니다.
+
+그 선택이 옳았다고 느낄 수 있도록, 함께 답을 찾아가며 성장할 수 있는 자리를 만들어 가겠습니다.
+조급해하지 않으셔도 됩니다. 하나씩 알아가며 자신만의 속도로 나아가면 됩니다. 그 과정을 곁에서 지원하겠습니다.
+그렇게 함께 만들어가는 시간이 곧 우리의 내일이라고 생각하며, 이 여정을 함께할 수 있어 기쁩니다.
+
+다시 한번 LX인터내셔널에서의 첫걸음을 진심으로 응원합니다.</p>
+        <div class="ceo-message-sign">
+          <span class="role">대표이사</span>
+          <span class="name">구혁서</span>
+        </div>
       </div>
 
       <div class="welcome-section">
@@ -2042,11 +2079,6 @@ modal.addEventListener('click', function (e) {
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') modal.classList.remove('show');
 });
-
-/* ================= Video placeholder ================= */
-function playVideo() {
-  showToast('영상이 준비 중입니다. 곧 만나보실 수 있어요!');
-}
 
 /* ================= Toast ================= */
 var toastTimer;
