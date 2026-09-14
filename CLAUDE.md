@@ -69,8 +69,12 @@ lx-onboarding/
    글자)과 대비되도록 `#tab-after`만 붉은 배경·흰 글자로 반전했고, 탭 우측 상단에
    펄스 애니메이션이 걸린 "NEW" 배지(`#tab-after::after`)를 얹어 새로 생긴 탭임을
    더 직관적으로 알아채도록 했습니다 (`prefers-reduced-motion`이면 애니메이션 없음).
-   배지는 첫 클릭까지는 그대로 두고 **두 번째 클릭부터** 사라집니다 — 클릭 횟수를
-   `lx-onboarding-after-clicks`(토큰별 분리)에 저장해 두 번째 클릭 시 `.badge-seen`
+   배지는 첫 방문까지는 그대로 두고 **두 번째 방문부터** 사라집니다. 클릭 횟수가 아니라
+   "재방문 횟수"를 기준으로 삼는데, 클릭 단위로 세면 한 번 들어와서 이것저것 눌러보는
+   동안(같은 페이지 로드 내 재클릭)에도 카운트가 올라가 정작 입사자 본인이 처음
+   확인하기도 전에(혹은 테스트하다가) 배지가 사라지는 문제가 있었기 때문입니다.
+   페이지 로드당 최초 1클릭만 세어(`afterTabCountedThisLoad` 플래그)
+   `lx-onboarding-after-visits`(토큰별 분리)에 저장하고, 2회째 방문에서 `.badge-seen`
    클래스를 붙이는 방식(`registerAfterTabClick()`).
 4. **입사 준비** — 진행률 바, 4개 To-Do 체크리스트(웰컴 키트·구비서류 9종·
    첫 출근 일정 등록·복장), 웰컴 기프트 배송지 폼
@@ -118,7 +122,8 @@ lx-onboarding/
 - 구비서류 상위 항목(`#docsTodo`)은 `label`이 아니라 `div`입니다.
   `label` 중첩이 HTML 스펙 위반이라 클릭/키보드 핸들러를 직접 붙였습니다.
 - localStorage 키: `lx-onboarding-todo`, `lx-onboarding-docs`, `lx-onboarding-gift`,
-  `lx-onboarding-after` — 토큰으로 접속한 경우 각각 `-토큰` 접미사가 붙어 입사자별로 분리됩니다.
+  `lx-onboarding-after`, `lx-onboarding-after-visits` — 토큰으로 접속한 경우 각각 `-토큰`
+  접미사가 붙어 입사자별로 분리됩니다.
 - `.tab`에는 `display: flex`가 걸려 있어 `hidden` 속성만으로는 안 가려집니다.
   `.tab[hidden] { display: none; }`를 별도로 둔 이유입니다 ("입사 후" 탭 숨김에 사용).
 

@@ -1598,20 +1598,26 @@ tabs.forEach(function (tab) {
   });
 });
 
-/* "입사 후" 탭의 NEW 배지: 첫 클릭까지는 그대로 두고, 두 번째 클릭부터 사라지게 함.
-   방문 여부가 아니라 "클릭 횟수"를 세는 이유 — 탭을 열어봤다가 다시 눌러도 여전히
-   새 기능임을 인지시키고, 완전히 익숙해진 두 번째 방문부터만 배지를 접기 위함 */
-var AFTER_CLICK_KEY = 'lx-onboarding-after-clicks' + (LX_TOKEN ? '-' + LX_TOKEN : '');
-function getAfterClickCount() {
-  try { return parseInt(localStorage.getItem(AFTER_CLICK_KEY), 10) || 0; } catch (e) { return 0; }
+/* "입사 후" 탭의 NEW 배지: 첫 "방문"까지는 그대로 두고, 두 번째 방문부터 사라지게 함.
+   "클릭 횟수"가 아니라 "재방문 횟수"를 세는 이유 — 클릭 단위로 세면 한 번 들어와서
+   이것저것 눌러보는 동안(같은 페이지 로드 내 재클릭)에도 카운트가 올라가 버려,
+   정작 입사자 본인이 처음 확인하기도 전에(혹은 테스트하느라 몇 번 눌러보는 사이에)
+   배지가 사라지는 문제가 있었음. 페이지를 새로 열 때마다 최초 1클릭만 세도록 해
+   "같은 방문 안에서 여러 번 클릭"과 "나중에 다시 들어와 클릭"을 구분함 */
+var AFTER_VISIT_KEY = 'lx-onboarding-after-visits' + (LX_TOKEN ? '-' + LX_TOKEN : '');
+var afterTabCountedThisLoad = false;   // 페이지 로드당 한 번만 카운트
+function getAfterVisitCount() {
+  try { return parseInt(localStorage.getItem(AFTER_VISIT_KEY), 10) || 0; } catch (e) { return 0; }
 }
 function registerAfterTabClick() {
-  var count = getAfterClickCount() + 1;
-  try { localStorage.setItem(AFTER_CLICK_KEY, String(count)); } catch (e) { /* ignore */ }
+  if (afterTabCountedThisLoad) return;
+  afterTabCountedThisLoad = true;
+  var count = getAfterVisitCount() + 1;
+  try { localStorage.setItem(AFTER_VISIT_KEY, String(count)); } catch (e) { /* ignore */ }
   if (count >= 2) tabAfterEl.classList.add('badge-seen');
 }
 var tabAfterEl = document.getElementById('tab-after');
-if (tabAfterEl && getAfterClickCount() >= 2) tabAfterEl.classList.add('badge-seen');
+if (tabAfterEl && getAfterVisitCount() >= 2) tabAfterEl.classList.add('badge-seen');
 
 /* ================= 입사 후 탭 노출 (D-Day 당일부터) ================= */
 /* 출근일 D-Day 전(D-1까지)에는 4탭, D-Day 당일부터 "입사 후" 탭이 추가로 노출됨.
