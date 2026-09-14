@@ -21,7 +21,7 @@
 
 | 조각 | 실체 | 있는 곳 |
 |---|---|---|
-| **화면(프런트엔드)** | `index.html` | 이 GitHub 저장소 → GitHub Pages로 자동 배포 |
+| **화면(프론트엔드)** | `index.html` | 이 GitHub 저장소 → GitHub Pages로 자동 배포 |
 | **DB + 서버(백엔드)** | Google Sheet + Google Apps Script(GAS) | `script.google.com` / Google Sheets (이 저장소 밖) |
 
 ```
