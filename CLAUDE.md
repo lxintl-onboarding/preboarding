@@ -20,14 +20,16 @@ lx-onboarding/
 │   └── logo-color.png, logo_front.png  # 미사용 — index-ivory.html 삭제로 남은 것, 정리 대상
 └── docs/
     ├── DECISIONS.md                    # 의사결정 기록 (왜 이렇게 만들었는가)
-    ├── BACKLOG.md                      # 남은 작업
-    ├── UX_IMPROVEMENT_PLAN.md          # ★ 다음 작업. 리서치 근거 포함
     ├── ARCHITECTURE_DECISION_RECORD.html  # GAS 연동 아키텍처 결정 기록 (다운로드 가능한 독립 파일)
     ├── ACCOUNT_OWNERSHIP_RECORD.html   # 계정 소유권 관리 방안 (GitHub Owner, GAS 무료/유료 계정 결정)
     └── gas-code.gs                     # Google Apps Script 백엔드 코드 (실제 배포본과 동일)
 ```
 
-**다음 작업은 `docs/UX_IMPROVEMENT_PLAN.md`의 Phase 1부터 시작하세요.**
+**다음 작업**: 레이아웃·비주얼 개선(하단 네비게이션·SVG 아이콘·타이포 정리)은
+완료된 상태입니다. 다음 우선순위는 콘텐츠 보강(팀/동료 환영 메시지, FAQ,
+사내 호칭·용어·조직도 안내 등)이며, 실제 콘텐츠가 담당 부서로부터 확보되는
+대로 진행합니다. 별도의 계획 문서는 두지 않으므로, 착수 시 이 섹션에 상황을
+갱신하세요.
 
 **A안/B안 중 B안(Red 히어로)으로 확정되어 `index-ivory.html`(구 A안)은 삭제되었습니다.**
 `index.html`이 유일한 운영 버전입니다.
