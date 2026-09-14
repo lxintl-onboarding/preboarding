@@ -54,14 +54,27 @@ lx-onboarding/
 링크 생성")를 실행하면 토큰과 링크가 자동 생성됩니다 — 자세한 건 아래
 "새 입사자를 추가하려면" 참고.
 
-## 화면 구성 (4탭)
+## 화면 구성 (기본 4탭 + 출근일 이후 조건부 탭)
 
 1. **환영 인사** — CEO 축하 영상(플레이스홀더), 동료들의 환영 인사(Welcome Note), 회사 소개
 2. **입사 정보** — 첫 출근 안내(날짜·시간·장소, 담당자 성함·연락처는 GAS 조회로 자동 채워짐) +
    D-Day, 출근 후 일정(오리엔테이션 → 현업부서 배치 → 온보딩)
-3. **입사 준비** — 진행률 바, 4개 To-Do 체크리스트(웰컴 키트·구비서류 9종·
+3. **입사 후** *(D-Day 당일부터 노출, 5탭 중 정가운데 위치)* — `#tab-after`/`#panel-after`.
+   첫 출근일 D-1까지는 숨겨져 있다가 D-Day 당일부터 나타나는 조건부 탭. "입사 정보"와
+   "입사 준비" 사이(전체 5탭 중 3번째, 정가운데)에 두어 가장 눈에 잘 띄는 자리에 배치함
+   (탭 나열 순서 = HTML 소스 순서이므로, `.tab` 버튼과 `.panel` 섹션 모두 이 위치에 있음).
+   사원증 수령·계정 활성화 등 입사 후 체크리스트를 보여줌 (`#afterTodoList`, 별도
+   localStorage 키). **현재 항목은 담당 부서로부터 실제 내용을 받기 전까지의 임시
+   콘텐츠** — 콘텐츠 보강 작업 시 함께 교체 대상. 노출되는 순간 다른 4탭(흰 배경·붉은
+   글자)과 대비되도록 `#tab-after`만 붉은 배경·흰 글자로 반전했고, 탭 우측 상단에
+   펄스 애니메이션이 걸린 "NEW" 배지(`#tab-after::after`)를 얹어 새로 생긴 탭임을
+   더 직관적으로 알아채도록 했습니다 (`prefers-reduced-motion`이면 애니메이션 없음).
+   배지는 첫 클릭까지는 그대로 두고 **두 번째 클릭부터** 사라집니다 — 클릭 횟수를
+   `lx-onboarding-after-clicks`(토큰별 분리)에 저장해 두 번째 클릭 시 `.badge-seen`
+   클래스를 붙이는 방식(`registerAfterTabClick()`).
+4. **입사 준비** — 진행률 바, 4개 To-Do 체크리스트(웰컴 키트·구비서류 9종·
    첫 출근 일정 등록·복장), 웰컴 기프트 배송지 폼
-4. **참고 정보** — 필터 2종(LX인터내셔널 문화 / 기본 매너·에티켓)로 나뉜 아코디언 10개
+5. **참고 정보** — 필터 2종(LX인터내셔널 문화 / 기본 매너·에티켓)로 나뉜 아코디언 10개
    (문화: 인재상·인재 육성 체계·신규 입사자 프로그램·조직문화 프로그램·출근룩 가이드,
    매너·에티켓: 첫날 가이드·커뮤니케이션·회의·보고·동료관계·보안) + Do&Don't
 
@@ -86,21 +99,28 @@ lx-onboarding/
 | `personalizeHero()` (IIFE) | URL 토큰(`#t=`)으로 GAS를 조회해 이름·출근일·담당자·소속팀·환영메시지·제출여부를 개인화 |
 | `updateProgress(animate)` | 세그먼트 진행률 + 분수 표기 + NEXT 강조 + 100% 축하 트리거 |
 | `highlightNext()` | 미완료 항목 중 첫 번째에 NEXT 뱃지 |
-| `renderDday(dateStr)` | 주어진 날짜로 D-Day 계산·렌더. 토큰 조회 성공 시 실제 출근일로 재호출됨 |
+| `renderDday(dateStr)` | 주어진 날짜로 D-Day 계산·렌더 + `updateAfterDayTab(diff)` 호출. 토큰 조회 성공 시 실제 출근일로 재호출됨 |
+| `updateAfterDayTab(diff)` | diff(출근일-오늘) <= 0(=D-Day 당일 이후)이면 "입사 후" 탭을 노출, 아니면 숨김. 숨겨질 때 그 탭을 보고 있었다면 첫 탭으로 되돌림 |
+| `selectTab(tab)` | 탭 전환 로직 본체 — 탭 클릭 핸들러와 `updateAfterDayTab`이 공유 |
 | `initDocs()` | 구비서류 9종 ↔ 상위 To-Do 양방향 동기화 |
+| `initAfterTodo()` | "입사 후" 탭의 체크리스트 로드/저장 (메인 진행률 계산과 분리된 별도 저장소) |
 | `openPostcode()` | Daum 우편번호 서비스 팝업 |
 | `giftForm` submit 핸들러 | 배송지 폼을 GAS로 POST 저장 (토큰 없으면 localStorage에만 임시 저장) |
-| `hrContact` 클릭 핸들러 | 하단 "인사팀" 클릭 시 `HR_EMAIL`을 클립보드에 복사 + 토스트로 안내 (탭 밖 공통 요소라 4탭 전부 동일 적용) |
+| `hrContact` 클릭 핸들러 | 하단 "인사팀" 클릭 시 `HR_EMAIL`을 클립보드에 복사 + 토스트로 안내 (탭 밖 공통 요소라 모든 탭에서 동일 적용) |
 | `celebrate()` | 컨페티 canvas + 축하 모달 |
 
 ### 주의사항
 
-- `checkboxes` 셀렉터는 `.todo > input[data-key]`로 **직계 자식만** 잡습니다.
-  하위 서류 체크박스(`data-doc`)가 진행률에 섞이면 안 됩니다.
+- `checkboxes` 셀렉터는 `#todoList > .todo > input[data-key]`로 **"입사 준비" 탭 안 직계 자식만**
+  잡습니다. 하위 서류 체크박스(`data-doc`)뿐 아니라, "입사 후" 탭의 `#afterTodoList` 체크박스도
+  같은 `.todo` 마크업을 재사용하므로 `#todoList`로 범위를 좁히지 않으면 두 체크리스트의
+  진행률이 섞입니다.
 - 구비서류 상위 항목(`#docsTodo`)은 `label`이 아니라 `div`입니다.
   `label` 중첩이 HTML 스펙 위반이라 클릭/키보드 핸들러를 직접 붙였습니다.
-- localStorage 키: `lx-onboarding-todo`, `lx-onboarding-docs`, `lx-onboarding-gift` —
-  토큰으로 접속한 경우 각각 `-토큰` 접미사가 붙어 입사자별로 분리됩니다.
+- localStorage 키: `lx-onboarding-todo`, `lx-onboarding-docs`, `lx-onboarding-gift`,
+  `lx-onboarding-after` — 토큰으로 접속한 경우 각각 `-토큰` 접미사가 붙어 입사자별로 분리됩니다.
+- `.tab`에는 `display: flex`가 걸려 있어 `hidden` 속성만으로는 안 가려집니다.
+  `.tab[hidden] { display: none; }`를 별도로 둔 이유입니다 ("입사 후" 탭 숨김에 사용).
 
 ## 새 입사자를 추가하려면 (실제 운영 방식)
 

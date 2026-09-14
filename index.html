@@ -165,6 +165,42 @@
   .tab.active { color: var(--brand); }
   .tab.active::before { transform: translateX(-50%) scaleX(1); }
   .tab:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; border-radius: 8px; }
+  /* 출근일 이전(D-Day 전)에는 "입사 후" 탭을 숨김 — .tab에 display:flex가 있어
+     hidden 속성만으로는 안 가려지므로 명시적으로 override */
+  .tab[hidden] { display: none; }
+
+  /* "입사 후" 탭 강조 — 노출되는 순간부터 다른 4탭(흰 배경 · 붉은 글자, 활성 시에만 색 변경)과
+     대비되도록 배경을 붉게 채우고 글자를 흰색으로 반전. 새로 생긴 탭임을 바로 알아채게 하기 위함 */
+  #tab-after {
+    background: var(--brand);
+    color: #fff;
+    transition: color .2s, background-color .2s;
+  }
+  #tab-after::before { background: #fff; }
+  #tab-after.active { color: #fff; }
+  #tab-after:focus-visible { outline-color: #fff; }
+  /* "새로 생긴 탭"임을 직관적으로 알리는 NEW 배지 — 붉은 배경 위에 흰 필로 얹고,
+     계속 살짝 커졌다 작아지며 펄스를 줘서 하단 네비게이션에서 시선을 바로 붙잡음 */
+  #tab-after::after {
+    content: "NEW";
+    position: absolute;
+    top: -6px; right: 10px;
+    background: #fff;
+    color: var(--brand);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    line-height: 1;
+    padding: 3px 6px;
+    border-radius: 999px;
+    animation: tabNewPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes tabNewPulse {
+    0%, 100%  { transform: scale(1);    box-shadow: 0 0 0 0 rgba(255,255,255,.55); }
+    50%       { transform: scale(1.12); box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+  }
+  /* 두 번째 클릭부터는 이미 익숙해진 탭으로 보고 NEW 배지를 접음 */
+  #tab-after.badge-seen::after { content: none; }
 
   /* ===== Panels ===== */
   .panel { display: none; padding: 24px 20px 6px; animation: fadeIn .25s ease; }
@@ -644,7 +680,7 @@
   }
   .modal button:hover { background: var(--brand-dark); }
   @media (prefers-reduced-motion: reduce) {
-    .modal, .modal-backdrop, .seg, .badge-next { transition: none !important; animation: none !important; }
+    .modal, .modal-backdrop, .seg, .badge-next, #tab-after::after { transition: none !important; animation: none !important; }
   }
 
   .toast {
@@ -945,7 +981,54 @@ LX인터내셔널은 식량과 에너지 같은 세상에 없어서는 안 될 �
       </div>
     </section>
 
-    <!-- ================= Panel 3 : 입사 준비 ================= -->
+    <!-- ================= Panel 3 : 입사 후 체크리스트 (D-Day 당일부터 노출, 5탭 중 정가운데 위치) ================= -->
+    <!-- 담당 부서로부터 실제 항목을 확정받기 전까지의 임시 콘텐츠 — CLAUDE.md "다음 작업" 참고 -->
+    <section class="panel" id="panel-after" role="tabpanel" aria-labelledby="tab-after">
+      <div class="eyebrow">After Day 1</div>
+      <h2 class="panel-title">입사 후 체크리스트</h2>
+      <p class="panel-desc">첫 출근을 축하드려요! 입사 후 챙겨야 할 항목들을 확인해 보세요.</p>
+
+      <div class="todo-list" id="afterTodoList">
+        <label class="card todo">
+          <input type="checkbox" data-key="badge">
+          <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"></rect><circle cx="12" cy="9" r="2.3"></circle><path d="M9 15h6"></path></svg></span>
+          <span class="txt">
+            <h4>사원증·출입카드 수령</h4>
+            <p>담당자 안내에 따라 사원증과 출입카드를 수령해 주세요.</p>
+          </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
+        </label>
+        <label class="card todo">
+          <input type="checkbox" data-key="account">
+          <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M4 7l8 6 8-6"></path></svg></span>
+          <span class="txt">
+            <h4>사내 시스템 계정 활성화</h4>
+            <p>메일·그룹웨어 등 사내 시스템 계정이 정상적으로 활성화됐는지 확인해 주세요.</p>
+          </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
+        </label>
+        <label class="card todo">
+          <input type="checkbox" data-key="orientation-edu">
+          <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2 8l10 5 10-5-10-5z"></path><path d="M6 10.5V16c0 1.5 2.5 3 6 3s6-1.5 6-3v-5.5"></path></svg></span>
+          <span class="txt">
+            <h4>필수 입문 교육 수강</h4>
+            <p>신규 입사자 대상 필수 입문 교육 일정을 확인하고 수강해 주세요.</p>
+          </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
+        </label>
+        <label class="card todo">
+          <input type="checkbox" data-key="mentor-meeting">
+          <span class="todo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.6"></circle><path d="M2.5 20c.6-3.6 3-5.5 5.5-5.5s4.6 1.6 5.3 4"></path><path d="M13.8 15c1.7-.3 3.6.6 4.2 3"></path></svg></span>
+          <span class="txt">
+            <h4>사수·멘토와 첫 미팅</h4>
+            <p>소속 부서의 사수 또는 멘토와 첫 미팅 일정을 확인해 주세요.</p>
+          </span>
+          <span class="chk"><svg viewBox="0 0 16 16"><polyline points="2.5 8.5 6.5 12.5 13.5 4"/></svg></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ================= Panel 4 : 입사 준비 ================= -->
     <section class="panel" id="panel-todo" role="tabpanel" aria-labelledby="tab-todo">
       <div class="eyebrow">Before Day 1</div>
       <h2 class="panel-title">입사 전 To-Do</h2>
@@ -1116,7 +1199,7 @@ LX인터내셔널은 식량과 에너지 같은 세상에 없어서는 안 될 �
       </div>
     </section>
 
-    <!-- ================= Panel 4 : 참고 정보 ================= -->
+    <!-- ================= Panel 5 : 참고 정보 ================= -->
     <section class="panel" id="panel-info" role="tabpanel" aria-labelledby="tab-info">
       <div class="eyebrow">Good to Know</div>
       <h2 class="panel-title">입사 전 참고 정보</h2>
@@ -1393,6 +1476,11 @@ LX인터내셔널은 식량과 에너지 같은 세상에 없어서는 안 될 �
     <button class="tab" role="tab" aria-selected="false" aria-controls="panel-brief" id="tab-brief" data-panel="panel-brief">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"></path><circle cx="12" cy="9" r="2.5"></circle></svg></span>입사 정보
     </button>
+    <!-- 출근일이 지나기 전(D-1까지)에는 hidden으로 숨김. updateAfterDayTab()이 D-Day 당일부터 노출.
+         5개 탭 중 정가운데(3번째)에 두어 눈에 잘 띄도록 배치함 -->
+    <button class="tab" role="tab" aria-selected="false" aria-controls="panel-after" id="tab-after" data-panel="panel-after" hidden>
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="9"></circle></svg></span>입사 후
+    </button>
     <button class="tab" role="tab" aria-selected="false" aria-controls="panel-todo" id="tab-todo" data-panel="panel-todo">
       <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect><path d="M9 13l2 2 4-4"></path></svg></span>입사 준비
     </button>
@@ -1492,19 +1580,56 @@ var WELCOME_TEMPLATE = '"{{이름}}님, {{팀}}에 함께하게 되신 걸 진�
 
 /* ================= Tab navigation ================= */
 var tabs = document.querySelectorAll('.tab');
+function selectTab(tab) {
+  tabs.forEach(function (t) {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
+  document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+  tab.classList.add('active');
+  tab.setAttribute('aria-selected', 'true');
+  document.getElementById(tab.dataset.panel).classList.add('active');
+}
 tabs.forEach(function (tab) {
   tab.addEventListener('click', function () {
-    tabs.forEach(function (t) {
-      t.classList.remove('active');
-      t.setAttribute('aria-selected', 'false');
-    });
-    document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-    document.getElementById(tab.dataset.panel).classList.add('active');
+    selectTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tab.id === 'tab-after') registerAfterTabClick();
   });
 });
+
+/* "입사 후" 탭의 NEW 배지: 첫 클릭까지는 그대로 두고, 두 번째 클릭부터 사라지게 함.
+   방문 여부가 아니라 "클릭 횟수"를 세는 이유 — 탭을 열어봤다가 다시 눌러도 여전히
+   새 기능임을 인지시키고, 완전히 익숙해진 두 번째 방문부터만 배지를 접기 위함 */
+var AFTER_CLICK_KEY = 'lx-onboarding-after-clicks' + (LX_TOKEN ? '-' + LX_TOKEN : '');
+function getAfterClickCount() {
+  try { return parseInt(localStorage.getItem(AFTER_CLICK_KEY), 10) || 0; } catch (e) { return 0; }
+}
+function registerAfterTabClick() {
+  var count = getAfterClickCount() + 1;
+  try { localStorage.setItem(AFTER_CLICK_KEY, String(count)); } catch (e) { /* ignore */ }
+  if (count >= 2) tabAfterEl.classList.add('badge-seen');
+}
+var tabAfterEl = document.getElementById('tab-after');
+if (tabAfterEl && getAfterClickCount() >= 2) tabAfterEl.classList.add('badge-seen');
+
+/* ================= 입사 후 탭 노출 (D-Day 당일부터) ================= */
+/* 출근일 D-Day 전(D-1까지)에는 4탭, D-Day 당일부터 "입사 후" 탭이 추가로 노출됨.
+   renderDday()가 diff(출근일-오늘)를 계산할 때마다 이 함수를 호출해 갱신함 —
+   미리보기 기본값(FIRST_DAY)과 토큰 조회로 받은 실제 출근일 두 경우 모두 반영되도록.
+   personalizeHero()가 renderDday()를 스크립트 최상단(이 코드보다 먼저)에서도 호출할 수 있어
+   요소를 매번 새로 조회함 — 바깥의 var에 미리 담아두면 아직 할당 전이라 undefined일 수 있음 */
+function updateAfterDayTab(diff) {
+  var tab = document.getElementById('tab-after');
+  var panel = document.getElementById('panel-after');
+  if (!tab || !panel) return;
+  var show = diff <= 0;   // diff === 0(D-Day 당일)부터 노출
+  tab.hidden = !show;
+  /* 조건이 바뀌어 탭이 숨겨졌는데 마침 그 탭을 보고 있었다면 첫 탭으로 되돌림 */
+  if (!show && panel.classList.contains('active')) {
+    selectTab(document.getElementById('tab-welcome'));
+  }
+}
 
 /* ================= 하단 인사팀 문의 ================= */
 /* 푸터가 탭 밖(공통 영역)에 있어 4개 탭 어디서든 동일하게 동작합니다. */
@@ -1522,7 +1647,9 @@ document.getElementById('hrContact').addEventListener('click', function () {
 /* ================= Checklist + progress ================= */
 /* 토큰별로 키를 분리 — 같은 브라우저로 여러 입사자 링크를 열어도 체크 상태가 안 섞이게 함 */
 var STORAGE_KEY = 'lx-onboarding-todo' + (LX_TOKEN ? '-' + LX_TOKEN : '');
-var checkboxes = document.querySelectorAll('.todo > input[type="checkbox"][data-key]');
+/* #todoList로 범위를 한정 — 입사 후 체크리스트(#afterTodoList)도 같은 .todo 마크업을
+   재사용하므로, 범위를 안 좁히면 두 체크리스트가 진행률 계산에 섞이게 됨 */
+var checkboxes = document.querySelectorAll('#todoList > .todo > input[type="checkbox"][data-key]');
 var todoList  = document.getElementById('todoList');
 var pct   = document.getElementById('progressPct');
 var count = document.getElementById('progressCount');
@@ -1844,6 +1971,8 @@ function renderDday(dateStr) {
   else if (diff === 0){ num.textContent = 'D-DAY';     cap.textContent = '오늘!'; }
   else               { num.textContent = 'D+' + (-diff); cap.textContent = '입사 후'; }
   numMini.textContent = num.textContent;
+
+  updateAfterDayTab(diff);
 }
 
 if (!DDAY_FROM_URL) renderDday(FIRST_DAY);
@@ -1943,6 +2072,40 @@ if (!DDAY_FROM_URL) renderDday(FIRST_DAY);
 
   loadDocs();
   syncDocs(false);
+})();
+
+/* ================= 입사 후 체크리스트 (별도 저장소, D+1부터 노출되는 탭) ================= */
+(function initAfterTodo() {
+  var AFTER_KEY = 'lx-onboarding-after' + (LX_TOKEN ? '-' + LX_TOKEN : '');
+  var cbs = document.querySelectorAll('#afterTodoList > .todo > input[type="checkbox"][data-key]');
+
+  function load() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(AFTER_KEY) || '{}');
+      cbs.forEach(function (cb) {
+        if (saved[cb.dataset.key]) {
+          cb.checked = true;
+          cb.closest('.todo').classList.add('done');
+        }
+      });
+    } catch (e) { /* localStorage unavailable — state resets on reload */ }
+  }
+  function save() {
+    try {
+      var state = {};
+      cbs.forEach(function (cb) { state[cb.dataset.key] = cb.checked; });
+      localStorage.setItem(AFTER_KEY, JSON.stringify(state));
+    } catch (e) { /* ignore */ }
+  }
+
+  cbs.forEach(function (cb) {
+    cb.addEventListener('change', function () {
+      cb.closest('.todo').classList.toggle('done', cb.checked);
+      save();
+    });
+  });
+
+  load();
 })();
 
 /* ================= 주소 검색 (Daum 우편번호 서비스) ================= */
