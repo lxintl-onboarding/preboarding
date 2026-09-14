@@ -19,9 +19,7 @@ var COL = {
   HIRE_TYPE: '입사구분',
   ZIP: '우편번호',
   ADDR1: '주소',
-  ADDR2: '상세주소',
-  SIZE: '사이즈',
-  MEMO: '메모'
+  ADDR2: '상세주소'
 };
 /* 시트 헤더 쪽과 비교할 때 항상 같은 방식으로 비교되도록, 여기 값도 미리 정규화해둠
    (앞뒤 공백 제거 + 한글 자모 결합 방식 통일 — 눈엔 똑같아 보여도 다르게 저장되는 경우 방지) */
@@ -151,7 +149,7 @@ function doGet(e) {
 
 /** ================= 저장 =================
  * 입사자가 배송지 폼 "저장하기"를 누르면, 페이지의 JS가 이 doPost로
- * { token, name, phone, type, zip, addr1, addr2, size, memo } 를 전송.
+ * { token, name, phone, type, zip, addr1, addr2 } 를 전송.
  */
 function doPost(e) {
   var body = JSON.parse(e.postData.contents);
@@ -174,8 +172,6 @@ function doPost(e) {
   set(COL.ZIP, body.zip);
   set(COL.ADDR1, body.addr1);
   set(COL.ADDR2, body.addr2);
-  set(COL.SIZE, body.size);
-  set(COL.MEMO, body.memo);
   set(COL.SUBMITTED, true);
 
   return jsonResponse({ ok: true });
